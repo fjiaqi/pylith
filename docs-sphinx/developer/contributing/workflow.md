@@ -94,7 +94,7 @@ Make sure all of your local changes have been committed or [stashed](https://git
 caption: Syncing your fork
 ---
 # Update your local version of the upstream repository
-$ get fetch upstream
+$ git fetch upstream
 
 # Check out the 'main' branch
 $ git checkout main
