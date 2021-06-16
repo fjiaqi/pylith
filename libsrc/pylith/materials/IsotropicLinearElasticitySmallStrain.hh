@@ -16,29 +16,29 @@
 // ----------------------------------------------------------------------
 //
 
-/** @file libsrc/materials/IsotropicLinearElasticityLgDeform.hh
+/** @file libsrc/materials/IsotropicLinearElasticitySmallStrain.hh
  *
  * @brief C++ class for isotropic linear elastic material.
  */
 
-#if !defined(pylith_materials_isotropiclinearelasticityLgDeform_hh)
-#define pylith_materials_isotropiclinearelasticityLgDeform_hh
+#if !defined(pylith_materials_isotropiclinearelasticitySmallStrain_hh)
+#define pylith_materials_isotropiclinearelasticitySmallStrain_hh
 
 #include "materialsfwd.hh" // forward declarations
 
 #include "pylith/materials/RheologyElasticity.hh" // ISA RheologyElasticity
 
-class pylith::materials::IsotropicLinearElasticityLgDeform : public pylith::materials::RheologyElasticity {
-    friend class TestIsotropicLinearElasticityLgDeform; // unit testing
+class pylith::materials::IsotropicLinearElasticitySmallStrain : public pylith::materials::RheologyElasticity {
+    friend class TestIsotropicLinearElasticitySmallStrain; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
     /// Default constructor.
-    IsotropicLinearElasticityLgDeform(void);
+    IsotropicLinearElasticitySmallStrain(void);
 
     /// Destructor.
-    ~IsotropicLinearElasticityLgDeform(void);
+    ~IsotropicLinearElasticitySmallStrain(void);
 
     /// Deallocate PETSc and local data structures.
     void deallocate(void);
@@ -102,11 +102,11 @@ private:
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    IsotropicLinearElasticityLgDeform(const IsotropicLinearElasticityLgDeform&); ///< Not implemented.
-    const IsotropicLinearElasticityLgDeform& operator=(const IsotropicLinearElasticityLgDeform&); /// Not implemented.
+    IsotropicLinearElasticitySmallStrain(const IsotropicLinearElasticitySmallStrain&); ///< Not implemented.
+    const IsotropicLinearElasticitySmallStrain& operator=(const IsotropicLinearElasticitySmallStrain&); /// Not implemented.
 
-}; // class IsotropicLinearElasticityLgDeform
+}; // class IsotropicLinearElasticitySmallStrain
 
-#endif // pylith_materials_isotropiclinearelasticityLgDeform_hh
+#endif // pylith_materials_isotropiclinearelasticitySmallStrain_hh
 
 // End of file

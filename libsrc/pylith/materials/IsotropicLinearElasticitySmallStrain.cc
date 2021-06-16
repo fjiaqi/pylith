@@ -18,10 +18,10 @@
 
 #include <portinfo>
 
-#include "pylith/materials/IsotropicLinearElasticityLgDeform.hh" // implementation of object methods
+#include "pylith/materials/IsotropicLinearElasticitySmallStrain.hh" // implementation of object methods
 
 #include "pylith/materials/AuxiliaryFactoryElastic.hh" // USES AuxiliaryFactoryElastic
-#include "pylith/fekernels/IsotropicLinearElasticityLgDeform.hh" // USES IsotropicLinearElasticityLgDeform kernels
+#include "pylith/fekernels/IsotropicLinearElasticitySmallStrain.hh" // USES IsotropicLinearElasticitySmallStrain kernels
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN/END
 
@@ -31,16 +31,16 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::materials::IsotropicLinearElasticityLgDeform::IsotropicLinearElasticityLgDeform(void) :
+pylith::materials::IsotropicLinearElasticitySmallStrain::IsotropicLinearElasticitySmallStrain(void) :
     _auxiliaryFactory(new pylith::materials::AuxiliaryFactoryElastic),
     _useReferenceState(false) {
-    pylith::utils::PyreComponent::setName("isotropiclinearelasticityLgDeform");
+    pylith::utils::PyreComponent::setName("isotropiclinearelasticitySmallStrain");
 } // constructor
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
-pylith::materials::IsotropicLinearElasticityLgDeform::~IsotropicLinearElasticityLgDeform(void) {
+pylith::materials::IsotropicLinearElasticitySmallStrain::~IsotropicLinearElasticitySmallStrain(void) {
     deallocate();
 } // destructor
 
@@ -48,7 +48,7 @@ pylith::materials::IsotropicLinearElasticityLgDeform::~IsotropicLinearElasticity
 // ---------------------------------------------------------------------------------------------------------------------
 // Deallocate PETSc and local data structures.
 void
-pylith::materials::IsotropicLinearElasticityLgDeform::deallocate(void) {
+pylith::materials::IsotropicLinearElasticitySmallStrain::deallocate(void) {
     RheologyElasticity::deallocate();
 
     delete _auxiliaryFactory;_auxiliaryFactory = NULL;
@@ -59,7 +59,7 @@ pylith::materials::IsotropicLinearElasticityLgDeform::deallocate(void) {
 // Use reference stress and strain in computation of stress and
 // strain?
 void
-pylith::materials::IsotropicLinearElasticityLgDeform::useReferenceState(const bool value) {
+pylith::materials::IsotropicLinearElasticitySmallStrain::useReferenceState(const bool value) {
     PYLITH_COMPONENT_DEBUG("useReferenceState="<<value<<")");
 
     _useReferenceState = value;
@@ -70,7 +70,7 @@ pylith::materials::IsotropicLinearElasticityLgDeform::useReferenceState(const bo
 // Use reference stress and strain in computation of stress and
 // strain?
 bool
-pylith::materials::IsotropicLinearElasticityLgDeform::useReferenceState(void) const {
+pylith::materials::IsotropicLinearElasticitySmallStrain::useReferenceState(void) const {
     return _useReferenceState;
 } // useReferenceState
 
@@ -78,7 +78,7 @@ pylith::materials::IsotropicLinearElasticityLgDeform::useReferenceState(void) co
 // ---------------------------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.
 pylith::materials::AuxiliaryFactoryElasticity*
-pylith::materials::IsotropicLinearElasticityLgDeform::getAuxiliaryFactory(void) {
+pylith::materials::IsotropicLinearElasticitySmallStrain::getAuxiliaryFactory(void) {
     return _auxiliaryFactory;
 } // getAuxiliaryFactory
 
@@ -86,7 +86,7 @@ pylith::materials::IsotropicLinearElasticityLgDeform::getAuxiliaryFactory(void) 
 // ---------------------------------------------------------------------------------------------------------------------
 // Add rheology subfields to auxiliary field.
 void
-pylith::materials::IsotropicLinearElasticityLgDeform::addAuxiliarySubfields(void) {
+pylith::materials::IsotropicLinearElasticitySmallStrain::addAuxiliarySubfields(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("addAuxiliarySubfields(void)");
 
@@ -107,16 +107,16 @@ pylith::materials::IsotropicLinearElasticityLgDeform::addAuxiliarySubfields(void
 // ---------------------------------------------------------------------------------------------------------------------
 // Get stress kernel for LHS residual, F(t,s,\dot{s}).
 PetscPointFunc
-pylith::materials::IsotropicLinearElasticityLgDeform::getKernelResidualStress(const spatialdata::geocoords::CoordSys* coordsys) const {
+pylith::materials::IsotropicLinearElasticitySmallStrain::getKernelResidualStress(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelResidualStress(coordsys="<<typeid(coordsys).name()<<")");
 
     const int spaceDim = coordsys->getSpaceDim();
     PetscPointFunc f1u =
-        (!_useReferenceState && 3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeform3D::f1v :
-        (!_useReferenceState && 2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::f1v :
-        (_useReferenceState && 3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeform3D::f1v_refstate :
-        (_useReferenceState && 2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::f1v_refstate :
+        (!_useReferenceState && 3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::f1v :
+        (!_useReferenceState && 2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::f1v :
+        (_useReferenceState && 3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::f1v_refstate :
+        (_useReferenceState && 2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::f1v_refstate :
         NULL;
 
     PYLITH_METHOD_RETURN(f1u);
@@ -126,14 +126,14 @@ pylith::materials::IsotropicLinearElasticityLgDeform::getKernelResidualStress(co
 // ---------------------------------------------------------------------------------------------------------------------
 // Get elastic constants kernel for LHS Jacobian F(t,s,\dot{s}).
 PetscPointJac
-pylith::materials::IsotropicLinearElasticityLgDeform::getKernelJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys) const {
+pylith::materials::IsotropicLinearElasticitySmallStrain::getKernelJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelJacobianElasticConstants(coordsys="<<typeid(coordsys).name()<<")");
 
     const int spaceDim = coordsys->getSpaceDim();
     PetscPointJac Jf3uu =
-        (3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeform3D::Jf3vu :
-        (2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::Jf3vu :
+        (3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::Jf3vu :
+        (2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::Jf3vu :
         NULL;
 
     PYLITH_METHOD_RETURN(Jf3uu);
@@ -143,16 +143,16 @@ pylith::materials::IsotropicLinearElasticityLgDeform::getKernelJacobianElasticCo
 // ---------------------------------------------------------------------------------------------------------------------
 // Get stress kernel for derived field.
 PetscPointFunc
-pylith::materials::IsotropicLinearElasticityLgDeform::getKernelDerivedCauchyStress(const spatialdata::geocoords::CoordSys* coordsys) const {
+pylith::materials::IsotropicLinearElasticitySmallStrain::getKernelDerivedCauchyStress(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelDerivedCauchyStress(coordsys="<<typeid(coordsys).name()<<")");
 
     const int spaceDim = coordsys->getSpaceDim();
     PetscPointFunc kernel =
-        (!_useReferenceState && 3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeform3D::cauchyStress :
-        (!_useReferenceState && 2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::cauchyStress :
-        (_useReferenceState && 3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeform3D::cauchyStress_refstate :
-        (_useReferenceState && 2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::cauchyStress_refstate :
+        (!_useReferenceState && 3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::cauchyStress :
+        (!_useReferenceState && 2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::cauchyStress :
+        (_useReferenceState && 3 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::cauchyStress_refstate :
+        (_useReferenceState && 2 == spaceDim) ? pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::cauchyStress_refstate :
         NULL;
 
     PYLITH_METHOD_RETURN(kernel);

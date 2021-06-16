@@ -16,7 +16,7 @@
  * ----------------------------------------------------------------------
  */
 
-/** @file libsrc/fekernels/IsotropicLinearElasticityLgDeform.hh
+/** @file libsrc/fekernels/IsotropicLinearElasticitySmallStrain.hh
  *
  * Kernels for isotropic, linear elasticity.
  *
@@ -66,8 +66,8 @@
  * @param[out] f0 [dim].
  */
 
-#if !defined(pylith_fekernels_isotropiclinearelasticityLgDeform_hh)
-#define pylith_fekernels_isotropiclinearelasticityLgDeform_hh
+#if !defined(pylith_fekernels_isotropiclinearelasticitySmallStrain_hh)
+#define pylith_fekernels_isotropiclinearelasticitySmallStrain_hh
 
 #include "fekernelsfwd.hh" // forward declarations
 
@@ -75,7 +75,7 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 /// Kernels specific to isotropic, linearly elasticity plane strain.
-class pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain {
+class pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain {
     // PUBLIC MEMBERS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
@@ -371,11 +371,11 @@ public:
                                    const PylithScalar constants[],
                                    PylithScalar stress[]);
 
-}; // IsotropicLinearElasticityLgDeformPlaneStrain
+}; // IsotropicLinearElasticitySmallStrainPlaneStrain
 
 // ---------------------------------------------------------------------------------------------------------------------
 /// Kernels specific to isotropic, linearly elasticity in 3D.
-class pylith::fekernels::IsotropicLinearElasticityLgDeform3D {
+class pylith::fekernels::IsotropicLinearElasticitySmallStrain3D {
     // PUBLIC MEMBERS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
@@ -667,8 +667,8 @@ public:
                                    const PylithScalar constants[],
                                    PylithScalar stress[]);
 
-}; // IsotropicLinearElasticityLgDeform3D
+}; // IsotropicLinearElasticitySmallStrain3D
 
-#endif // pylith_fekernels_isotropiclinearelasticityLgDeform_hh
+#endif // pylith_fekernels_isotropiclinearelasticitySmallStrain_hh
 
 // End of file

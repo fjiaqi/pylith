@@ -18,18 +18,18 @@
 
 #include <portinfo>
 
-#include "TestIsotropicLinearElasticityLgDeform.hh" // Implementation of class methods
+#include "TestIsotropicLinearElasticitySmallStrain.hh" // Implementation of class methods
 
 #include "pylith/materials/Elasticity.hh" // USES Elasticity
-#include "pylith/materials/IsotropicLinearElasticityLgDeform.hh" // USES IsotropicLinearElasticityLgDeform
+#include "pylith/materials/IsotropicLinearElasticitySmallStrain.hh" // USES IsotropicLinearElasticitySmallStrain
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Setup testing data.
 void
-pylith::mmstests::TestIsotropicLinearElasticityLgDeform::setUp(void) {
+pylith::mmstests::TestIsotropicLinearElasticitySmallStrain::setUp(void) {
     TestElasticity::setUp();
 
-    _rheology = new pylith::materials::IsotropicLinearElasticityLgDeform();CPPUNIT_ASSERT(_rheology);
+    _rheology = new pylith::materials::IsotropicLinearElasticitySmallStrain();CPPUNIT_ASSERT(_rheology);
 
     CPPUNIT_ASSERT(_material);
     _material->setBulkRheology(_rheology);
@@ -39,7 +39,7 @@ pylith::mmstests::TestIsotropicLinearElasticityLgDeform::setUp(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Deallocate testing data.
 void
-pylith::mmstests::TestIsotropicLinearElasticityLgDeform::tearDown(void) {
+pylith::mmstests::TestIsotropicLinearElasticitySmallStrain::tearDown(void) {
     delete _rheology;_rheology = NULL;
 
     TestElasticity::tearDown();

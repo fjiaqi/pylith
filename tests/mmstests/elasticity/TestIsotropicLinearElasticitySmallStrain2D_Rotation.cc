@@ -18,11 +18,11 @@
 
 #include <portinfo>
 
-#include "TestIsotropicLinearElasticityLgDeform.hh" // ISA TestIsotropicLinearElasticityLgDeform2D
+#include "TestIsotropicLinearElasticitySmallStrain.hh" // ISA TestIsotropicLinearElasticitySmallStrain2D
 
 #include "pylith/problems/TimeDependent.hh" // USES TimeDependent
 #include "pylith/materials/Elasticity.hh" // USES Elasticity
-#include "pylith/materials/IsotropicLinearElasticityLgDeform.hh" // USES IsotropicLinearElasticityLgDeform
+#include "pylith/materials/IsotropicLinearElasticitySmallStrain.hh" // USES IsotropicLinearElasticitySmallStrain
 #include "pylith/bc/DirichletUserFn.hh" // USES DirichletUserFn
 
 #include "pylith/topology/Field.hh" // USES pylith::topology::Field::Discretization
@@ -36,24 +36,24 @@
 
 namespace pylith {
     namespace mmstests {
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain;
 
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP1;
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP2;
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP3;
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP4;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP1;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP2;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP3;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP4;
 
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1;
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1Distorted;
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ2;
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ3;
-        class TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ4;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1Distorted;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ2;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ3;
+        class TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ4;
     } // tests/mmstests
 } // pylith
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform {
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain {
     // Spatial database user functions for auxiiliary subfields (includes derived fields).
 
     // Density
@@ -127,10 +127,10 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain :
 protected:
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform::setUp();
+        TestIsotropicLinearElasticitySmallStrain::setUp();
 
         // Overwrite component names for control of journals at test level.
-        GenericComponent::setName("TestIsotropicLinearElasticityLgDeform2D_UniformStrain");
+        GenericComponent::setName("TestIsotropicLinearElasticitySmallStrain2D_UniformStrain");
 
         CPPUNIT_ASSERT(!_data);
         _data = new TestElasticity_Data();CPPUNIT_ASSERT(_data);
@@ -199,17 +199,17 @@ protected:
         err = PetscDSSetExactSolution(prob, 0, solnkernel_disp, NULL);CPPUNIT_ASSERT(!err);
     } // _setExactSolution
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP1 :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP1,
-                           TestIsotropicLinearElasticityLgDeform);
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP1 :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP1,
+                           TestIsotropicLinearElasticitySmallStrain);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform2D_UniformStrain::setUp();
+        TestIsotropicLinearElasticitySmallStrain2D_UniformStrain::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/tri.mesh";
@@ -222,18 +222,18 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_Tr
 
     } // setUp
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP1
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP1);
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP1
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP1);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP2 :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP2,
-                           TestIsotropicLinearElasticityLgDeform);
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP2 :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP2,
+                           TestIsotropicLinearElasticitySmallStrain);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform2D_UniformStrain::setUp();
+        TestIsotropicLinearElasticitySmallStrain2D_UniformStrain::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/tri.mesh";
@@ -253,18 +253,18 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_Tr
 
     } // setUp
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP2
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP2);
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP2
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP2);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP3 :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP3,
-                           TestIsotropicLinearElasticityLgDeform);
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP3 :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP3,
+                           TestIsotropicLinearElasticitySmallStrain);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform2D_UniformStrain::setUp();
+        TestIsotropicLinearElasticitySmallStrain2D_UniformStrain::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/tri.mesh";
@@ -284,18 +284,18 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_Tr
 
     } // setUp
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP3
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP3);
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP3
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP3);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP4 :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP4,
-                           TestIsotropicLinearElasticityLgDeform);
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP4 :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP4,
+                           TestIsotropicLinearElasticitySmallStrain);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform2D_UniformStrain::setUp();
+        TestIsotropicLinearElasticitySmallStrain2D_UniformStrain::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/tri.mesh";
@@ -315,18 +315,18 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_Tr
 
     } // setUp
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP4
-// CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_TriP4);
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP4
+// CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_TriP4);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1 :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1,
-                           TestIsotropicLinearElasticityLgDeform);
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1 :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1,
+                           TestIsotropicLinearElasticitySmallStrain);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform2D_UniformStrain::setUp();
+        TestIsotropicLinearElasticitySmallStrain2D_UniformStrain::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/quad.mesh";
@@ -339,18 +339,18 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_Qu
 
     } // setUp
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1);
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1Distorted :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1Distorted,
-                           TestIsotropicLinearElasticityLgDeform);
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1Distorted :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1Distorted,
+                           TestIsotropicLinearElasticitySmallStrain);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform2D_UniformStrain::setUp();
+        TestIsotropicLinearElasticitySmallStrain2D_UniformStrain::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/quad_distorted.mesh";
@@ -363,18 +363,18 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_Qu
 
     } // setUp
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1Distorted
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ1Distorted);
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1Distorted
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ1Distorted);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ2 :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ2,
-                           TestIsotropicLinearElasticityLgDeform);
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ2 :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ2,
+                           TestIsotropicLinearElasticitySmallStrain);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform2D_UniformStrain::setUp();
+        TestIsotropicLinearElasticitySmallStrain2D_UniformStrain::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/quad.mesh";
@@ -394,18 +394,18 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_Qu
 
     } // setUp
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ2
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ2);
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ2
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ2);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ3 :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ3,
-                           TestIsotropicLinearElasticityLgDeform);
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ3 :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ3,
+                           TestIsotropicLinearElasticitySmallStrain);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform2D_UniformStrain::setUp();
+        TestIsotropicLinearElasticitySmallStrain2D_UniformStrain::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/quad.mesh";
@@ -425,18 +425,18 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_Qu
 
     } // setUp
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ3
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ3);
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ3
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ3);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ4 :
-    public pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ4,
-                           TestIsotropicLinearElasticityLgDeform);
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ4 :
+    public pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ4,
+                           TestIsotropicLinearElasticitySmallStrain);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticityLgDeform2D_UniformStrain::setUp();
+        TestIsotropicLinearElasticitySmallStrain2D_UniformStrain::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/quad.mesh";
@@ -456,7 +456,7 @@ class pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_Qu
 
     } // setUp
 
-}; // TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ4
-// CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticityLgDeform2D_UniformStrain_QuadQ4);
+}; // TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ4
+// CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_UniformStrain_QuadQ4);
 
 // End of file

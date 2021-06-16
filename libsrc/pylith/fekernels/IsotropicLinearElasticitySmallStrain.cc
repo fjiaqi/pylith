@@ -18,7 +18,7 @@
 
 #include <portinfo>
 
-#include "IsotropicLinearElasticityLgDeform.hh" // Implementation of object methods
+#include "IsotropicLinearElasticitySmallStrain.hh" // Implementation of object methods
 
 #include "pylith/fekernels/Elasticity.hh" // USES Elasticity kernels
 
@@ -31,7 +31,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 // f1 function for isotropic linear elasticity plane strain WITHOUT reference stress and strain.
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::f1v(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::f1v(const PylithInt dim,
                                                                      const PylithInt numS,
                                                                      const PylithInt numA,
                                                                      const PylithInt sOff[],
@@ -86,7 +86,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::f1v(const Pylit
 // ----------------------------------------------------------------------
 // g1 function for isotropic linear elasticity plane strain with reference stress and strain.
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::f1v_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::f1v_refstate(const PylithInt dim,
                                                                               const PylithInt numS,
                                                                               const PylithInt numA,
                                                                               const PylithInt sOff[],
@@ -158,7 +158,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::f1v_refstate(co
  *   + shearModulus * (delta_ik*delta_jl + delta_il*delta*jk - 2/3*delta_ij*delta_kl)
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::Jf3vu(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::Jf3vu(const PylithInt dim,
                                                                        const PylithInt numS,
                                                                        const PylithInt numA,
                                                                        const PylithInt sOff[],
@@ -247,7 +247,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::Jf3vu(const Pyl
  * Auxiliary fields: [density(1), ..., shear_modulus(1), bulk_modulus(1)]
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::firstPiolaKirchhoffStress(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::firstPiolaKirchhoffStress(const PylithInt dim,
                                                                                            const PylithInt numS,
                                                                                            const PylithInt numA,
                                                                                            const PylithInt sOff[],
@@ -332,7 +332,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::firstPiolaKirch
  * Auxiliary fields: [density(1), ..., refstress(4), refstrain(4), shear_modulus(1), bulk_modulus(1)]
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::firstPiolaKirchhoffStress_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::firstPiolaKirchhoffStress_refstate(const PylithInt dim,
                                                                                             const PylithInt numS,
                                                                                             const PylithInt numA,
                                                                                             const PylithInt sOff[],
@@ -421,7 +421,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::firstPiolaKirch
  * Auxiliary fields: [density(1), ..., shear_modulus(1), bulk_modulus(1)]
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::cauchyStress(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::cauchyStress(const PylithInt dim,
                                                                               const PylithInt numS,
                                                                               const PylithInt numA,
                                                                               const PylithInt sOff[],
@@ -527,7 +527,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::cauchyStress(co
  * Auxiliary fields: [density(1), ..., refstress(4), refstrain(4), shear_modulus(1), bulk_modulus(1)]
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::cauchyStress_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::cauchyStress_refstate(const PylithInt dim,
                                                                                        const PylithInt numS,
                                                                                        const PylithInt numA,
                                                                                        const PylithInt sOff[],
@@ -639,7 +639,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::cauchyStress_re
  * stress += meanStress * delta_ij
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::meanStress(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::meanStress(const PylithInt dim,
                                                                             const PylithInt numS,
                                                                             const PylithInt numA,
                                                                             const PylithInt sOff[],
@@ -701,7 +701,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::meanStress(cons
  * stress += meanStress * delta_ij
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::meanStress_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::meanStress_refstate(const PylithInt dim,
                                                                                      const PylithInt numS,
                                                                                      const PylithInt numA,
                                                                                      const PylithInt sOff[],
@@ -775,7 +775,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::meanStress_refs
  * devStress_ij = 2*shearModulus*strain_ij
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::deviatoricStress(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::deviatoricStress(const PylithInt dim,
                                                                                   const PylithInt numS,
                                                                                   const PylithInt numA,
                                                                                   const PylithInt sOff[],
@@ -851,7 +851,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::deviatoricStres
  * devStress_ij = refstress_ij + 2*shearModulus*(strain_ij - refstrain_ij)
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::deviatoricStress_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::deviatoricStress_refstate(const PylithInt dim,
                                                                                            const PylithInt numS,
                                                                                            const PylithInt numA,
                                                                                            const PylithInt sOff[],
@@ -932,7 +932,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeformPlaneStrain::deviatoricStres
 // ---------------------------------------------------------------------------------------------------------------------
 // f1 function for isotropic linear elasticity 3D WITHOUT reference stress and strain.
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::f1v(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::f1v(const PylithInt dim,
                                                             const PylithInt numS,
                                                             const PylithInt numA,
                                                             const PylithInt sOff[],
@@ -987,7 +987,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::f1v(const PylithInt dim,
 // ---------------------------------------------------------------------------------------------------------------------
 // g1 function for isotropic linear elasticity 3D with reference stress and strain.
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::f1v_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::f1v_refstate(const PylithInt dim,
                                                                      const PylithInt numS,
                                                                      const PylithInt numA,
                                                                      const PylithInt sOff[],
@@ -1059,7 +1059,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::f1v_refstate(const Pylit
  *   + shearModulus * (delta_ik*delta_jl + delta_il*delta*jk - 2/3*delta_ij*delta_kl)
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::Jf3vu(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::Jf3vu(const PylithInt dim,
                                                               const PylithInt numS,
                                                               const PylithInt numA,
                                                               const PylithInt sOff[],
@@ -1221,7 +1221,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::Jf3vu(const PylithInt di
  * stress += meanStress * delta_ij
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::meanStress(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::meanStress(const PylithInt dim,
                                                                    const PylithInt numS,
                                                                    const PylithInt numA,
                                                                    const PylithInt sOff[],
@@ -1288,7 +1288,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::meanStress(const PylithI
  * stress += meanStress * delta_ij
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::meanStress_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::meanStress_refstate(const PylithInt dim,
                                                                             const PylithInt numS,
                                                                             const PylithInt numA,
                                                                             const PylithInt sOff[],
@@ -1367,7 +1367,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::meanStress_refstate(cons
  * devStress_ij = 2*shearModulus*strain_ij
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::deviatoricStress(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::deviatoricStress(const PylithInt dim,
                                                                          const PylithInt numS,
                                                                          const PylithInt numA,
                                                                          const PylithInt sOff[],
@@ -1468,7 +1468,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::deviatoricStress(const P
  * devStress_ij = refstress_ij + 2*shearModulus*(strain_ij - refstrain_ij)
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::deviatoricStress_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::deviatoricStress_refstate(const PylithInt dim,
                                                                                   const PylithInt numS,
                                                                                   const PylithInt numA,
                                                                                   const PylithInt sOff[],
@@ -1581,7 +1581,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::deviatoricStress_refstat
  * Auxiliary fields: [density(1), ... shear_modulus(1), bulk_modulus(1)]
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::firstPiolaKirchhoffStress(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::firstPiolaKirchhoffStress(const PylithInt dim,
                                                                                  const PylithInt numS,
                                                                                  const PylithInt numA,
                                                                                  const PylithInt sOff[],
@@ -1666,7 +1666,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::firstPiolaKirchhoffStres
  * Auxiliary fields: [density(1), ..., refstress(6), refstrain(6), shear_modulus(1), bulk_modulus(1)]
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::firstPiolaKirchhoffStress_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::firstPiolaKirchhoffStress_refstate(const PylithInt dim,
                                                                                            const PylithInt numS,
                                                                                            const PylithInt numA,
                                                                                            const PylithInt sOff[],
@@ -1755,7 +1755,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::firstPiolaKirchhoffStres
  * Auxiliary fields: [density(1), ... shear_modulus(1), bulk_modulus(1)]
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::cauchyStress(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::cauchyStress(const PylithInt dim,
                                                                      const PylithInt numS,
                                                                      const PylithInt numA,
                                                                      const PylithInt sOff[],
@@ -1863,7 +1863,7 @@ pylith::fekernels::IsotropicLinearElasticityLgDeform3D::cauchyStress(const Pylit
  * Auxiliary fields: [density(1), ..., refstress(6), refstrain(6), shear_modulus(1), bulk_modulus(1)]
  */
 void
-pylith::fekernels::IsotropicLinearElasticityLgDeform3D::cauchyStress_refstate(const PylithInt dim,
+pylith::fekernels::IsotropicLinearElasticitySmallStrain3D::cauchyStress_refstate(const PylithInt dim,
                                                                               const PylithInt numS,
                                                                               const PylithInt numA,
                                                                               const PylithInt sOff[],

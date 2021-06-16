@@ -20,9 +20,9 @@ include $(top_srcdir)/check.am
 TESTS = \
 	test_isotropiclinearelasticity2d_bodyforce \
 	test_isotropiclinearelasticity2d_smallstrainbodyforce \
-	test_isotropiclinearelasticitylgdeform2d_bodyforce \
+	#test_isotropiclinearelasticitysmallstrain2d_bodyforce \
 	#test_isotropiclinearelasticity2d \
-	#test_isotropiclinearelasticitylgdeform2d \
+	#test_isotropiclinearelasticitysmallstrain2d \
 	#test_isotropiclinearelasticity3d_uniformstrain \
 	#test_isotropiclinearelasticity3d_gravity \
 	#test_isotropiclinearelasticity3d_gravityrefstate \
@@ -44,10 +44,10 @@ test_isotropiclinearelasticity2d_smallstrainbodyforce_SOURCES = \
 		TestIsotropicLinearElasticity2D_SmallStrainBodyForce.cc \
 		test_driver.cc
 
-test_isotropiclinearelasticitylgdeform2d_bodyforce_SOURCES = \
+test_isotropiclinearelasticitysmallstrain2d_bodyforce_SOURCES = \
 		TestElasticity.cc \
-		TestIsotropicLinearElasticityLgDeform.cc \
-		TestIsotropicLinearElasticityLgDeform2D_BodyForce.cc \
+		TestIsotropicLinearElasticitySmallStrain.cc \
+		TestIsotropicLinearElasticitySmallStrain2D_BodyForce.cc \
 		test_driver.cc
 
 test_isotropiclinearelasticity2d_SOURCES = \
@@ -60,13 +60,13 @@ test_isotropiclinearelasticity2d_SOURCES = \
 		TestIsotropicLinearElasticity2D_BodyForce.cc \
 		test_driver.cc
 
-test_isotropiclinearelasticitylgdeform2d_SOURCES = \
+test_isotropiclinearelasticitysmallstrain2d_SOURCES = \
 		TestElasticity.cc \
-		TestIsotropicLinearElasticityLgDeform.cc \
-		TestIsotropicLinearElasticityLgDeform2D_UniformStrain.cc \
-		TestIsotropicLinearElasticityLgDeform2D_Rotation.cc \
-		TestIsotropicLinearElasticityLgDeform2D_Gravity.cc \
-		TestIsotropicLinearElasticityLgDeform2D_BodyForce.cc \
+		TestIsotropicLinearElasticitySmallStrain.cc \
+		TestIsotropicLinearElasticitySmallStrain2D_UniformStrain.cc \
+		TestIsotropicLinearElasticitySmallStrain2D_Rotation.cc \
+		TestIsotropicLinearElasticitySmallStrain2D_Gravity.cc \
+		TestIsotropicLinearElasticitySmallStrain2D_BodyForce.cc \
 		test_driver.cc
 
 test_isotropiclinearelasticity3d_uniformstrain_SOURCES = \

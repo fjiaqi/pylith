@@ -61,13 +61,13 @@ public:
      *
      * @param[in] value Flag indicating to use finite strain formulation.
      */
-    void useFiniteStrain(const bool value);
+    void useSmallStrain(const bool value);
 
     /** Use finite strain formulation?
      *
      * @returns True if finite strain formulation, false otherwise.
      */
-    bool useFiniteStrain(void) const;
+    bool useSmallStrain(void) const;
 
     /** Get auxiliary factory associated with physics.
      *
@@ -110,7 +110,7 @@ private:
 
     pylith::materials::AuxiliaryFactoryElastic* _auxiliaryFactory; ///< Factory for creating auxiliary subfields.
     bool _useReferenceState; ///< Flag to use reference stress and strain.
-    bool _useFiniteStrain; ///< Flag to use finite strain formulation.
+    bool _useSmallStrain; ///< Flag to use finite strain formulation.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:

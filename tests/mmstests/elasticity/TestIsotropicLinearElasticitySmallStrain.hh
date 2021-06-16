@@ -17,28 +17,28 @@
 //
 
 /**
- * @file tests/mmstests/elasticity/TestIsotropicLinearElasticityLgDeform.hh
+ * @file tests/mmstests/elasticity/TestIsotropicLinearElasticitySmallStrain.hh
  *
- * @brief C++ TestIsotropicLinearElasticityLgDeform object
+ * @brief C++ TestIsotropicLinearElasticitySmallStrain object
  *
- * C++ unit testing for IsotropicLinearElasticityLgDeform.
+ * C++ unit testing for IsotropicLinearElasticitySmallStrain.
  */
 
-#if !defined(pylith_mmstests_testisotropiclinearelasticityLgDeform_hh)
-#define pylith_mmstests_testisotropiclinearelasticityLgDeform_hh
+#if !defined(pylith_mmstests_testisotropiclinearelasticitySmallStrain_hh)
+#define pylith_mmstests_testisotropiclinearelasticitySmallStrain_hh
 
 #include "TestElasticity.hh" // ISA TestElasticity
 
-#include "pylith/materials/IsotropicLinearElasticityLgDeform.hh" // HOLDSA IsotropicLinearElasticityLgDeform
+#include "pylith/materials/IsotropicLinearElasticitySmallStrain.hh" // HOLDSA IsotropicLinearElasticitySmallStrain
 
 namespace pylith {
     namespace mmstests {
-        class TestIsotropicLinearElasticityLgDeform;
+        class TestIsotropicLinearElasticitySmallStrain;
     } // tests/mmstests
 } // pylith
 
-/// C++ unit testing for IsotropicLinearElasticityLgDeform
-class pylith::mmstests::TestIsotropicLinearElasticityLgDeform : public pylith::mmstests::TestElasticity {
+/// C++ unit testing for IsotropicLinearElasticitySmallStrain
+class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain : public pylith::mmstests::TestElasticity {
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
@@ -51,10 +51,10 @@ public:
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
 
-    pylith::materials::IsotropicLinearElasticityLgDeform* _rheology; ///< Rheology for testing.
+    pylith::materials::IsotropicLinearElasticitySmallStrain* _rheology; ///< Rheology for testing.
 
-}; // class TestIsotropicLinearElasticityLgDeform
+}; // class TestIsotropicLinearElasticitySmallStrain
 
-#endif // pylith_mmstests_testisotropiclinearelasticityLgDeform_hh
+#endif // pylith_mmstests_testisotropiclinearelasticitySmallStrain_hh
 
 // End of file

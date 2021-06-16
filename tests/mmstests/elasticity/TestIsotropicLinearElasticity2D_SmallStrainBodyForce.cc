@@ -204,7 +204,7 @@ protected:
         _material->setFormulation(pylith::problems::Physics::QUASISTATIC);
         _material->useBodyForce(true);
         _rheology->useReferenceState(false);
-        _rheology->useFiniteStrain(true);
+        _rheology->useSmallStrain(true);
 
         _material->setDescriptiveLabel("Isotropic Linear Elasticity Plane Strain");
         _material->setMaterialId(24);
