@@ -18,6 +18,8 @@ include $(top_srcdir)/subpackage.am
 include $(top_srcdir)/check.am
 
 TESTS = \
+	test_isotropiclinearelasticity2d_bodyforce \
+	test_isotropiclinearelasticity2d_smallstrainbodyforce \
 	test_isotropiclinearelasticitylgdeform2d_bodyforce \
 	#test_isotropiclinearelasticity2d \
 	#test_isotropiclinearelasticitylgdeform2d \
@@ -29,6 +31,18 @@ TESTS = \
 check_PROGRAMS = $(TESTS)
 
 
+
+test_isotropiclinearelasticity2d_bodyforce_SOURCES = \
+		TestElasticity.cc \
+		TestIsotropicLinearElasticity.cc \
+		TestIsotropicLinearElasticity2D_BodyForce.cc \
+		test_driver.cc
+
+test_isotropiclinearelasticity2d_smallstrainbodyforce_SOURCES = \
+		TestElasticity.cc \
+		TestIsotropicLinearElasticity.cc \
+		TestIsotropicLinearElasticity2D_SmallStrainBodyForce.cc \
+		test_driver.cc
 
 test_isotropiclinearelasticitylgdeform2d_bodyforce_SOURCES = \
 		TestElasticity.cc \
