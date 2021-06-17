@@ -93,7 +93,9 @@ class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce :
         const double mu = density(x,y) * vs(x,y) * vs(x,y);
         const double lambda = density(x,y) * vp(x,y) * vp(x,y) - 2.0*mu;
         const double disp_xx = BODYFORCE / (lambda + 2.0*mu) * (XMAX-x);
-        return BODYFORCE + 3.0*BODYFORCE*disp_xx + 1.5*BODYFORCE*disp_xx*disp_xx;
+        //return BODYFORCE + 3.0*BODYFORCE*disp_xx + 1.5*BODYFORCE*disp_xx*disp_xx;
+        return BODYFORCE + 1.0*BODYFORCE*disp_xx;
+        //return BODYFORCE;
     } // bodyforce_x
 
     static double bodyforce_y(const double x,
@@ -148,13 +150,14 @@ protected:
         TestIsotropicLinearElasticity::setUp();
 
         // Overwrite component names for control of journals at test level.
-        GenericComponent::setName("TestIsotropicLinearElasticity2D_BodyForce");
+        GenericComponent::setName("TestIsotropicLinearElasticity2D_SmallStrainBodyForce");
         pythia::journal::debug_t debug(GenericComponent::getName());
         // ebug.activate(); // DEBUGGING
 
         CPPUNIT_ASSERT(!_data);
         _data = new TestElasticity_Data();CPPUNIT_ASSERT(_data);
-        _isJacobianLinear = true;
+        _isJacobianLinear = false;
+        _jacobianConvergenceRate = 2.0;
 
         _data->spaceDim = 2;
         _data->meshFilename = ":UNKNOWN:"; // Set in child class.
@@ -206,7 +209,7 @@ protected:
         _rheology->useReferenceState(false);
         _rheology->useSmallStrain(true);
 
-        _material->setDescriptiveLabel("Isotropic Linear Elasticity Plane Strain");
+        _material->setDescriptiveLabel("Isotropic Linear Elasticity Plane Strain (Small Strain)");
         _material->setMaterialId(24);
 
         static const PylithInt constrainedDOF[2] = {0, 1};

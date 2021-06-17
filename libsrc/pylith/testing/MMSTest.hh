@@ -44,6 +44,7 @@ class pylith::testing::MMSTest : public pylith::utils::GenericComponent,
     CPPUNIT_TEST(testResidual);
     CPPUNIT_TEST(testJacobianTaylorSeries);
     CPPUNIT_TEST(testJacobianFiniteDiff);
+    CPPUNIT_TEST(testSolve);
 
     CPPUNIT_TEST_SUITE_END_ABSTRACT();
 
@@ -61,6 +62,9 @@ public:
 
     /// Verify residual evaluated for solution is below specified tolerance.
     void testResidual(void);
+
+    /// Verify solve.
+    void testSolve(void);
 
     /** Verify Jacobian via Taylor series.
      *

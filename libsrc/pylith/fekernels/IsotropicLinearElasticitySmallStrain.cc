@@ -74,9 +74,21 @@ pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain::f1v(const Py
     const PylithInt sOffDisp[1] = { sOff[i_disp] };
     const PylithInt sOffDisp_x[1] = { sOff_x[i_disp] };
 
-    PylithScalar stressTensor[4] = {0.0, 0.0, 0.0, 0.0};
-    firstPiolaKirchhoffStress(_dim, _numS, numA, sOffDisp, sOffDisp_x, s, s_t, s_x, aOff, NULL, a, a_t, NULL,
-                              t, x, numConstants, constants, stressTensor);
+    const PylithInt numAMean = 1; // Number passed to mean stress kernel.
+    const PylithInt aOffMean[1] = { aOff[i_bulkModulus] };
+
+    const PylithInt numADev = 1; // Number passed to deviatoric stress kernel.
+    const PylithInt aOffDev[1] = { aOff[i_shearModulus] };
+
+    PylithScalar stressTensor[4] = { 0.0, 0.0, 0.0, 0.0 };
+    meanStress(_dim, _numS, numAMean, sOffDisp, sOffDisp_x, s, s_t, s_x, aOffMean, NULL, a, a_t, NULL,
+               t, x, numConstants, constants, stressTensor);
+    deviatoricStress(_dim, _numS, numADev, sOffDisp, sOffDisp_x, s, s_t, s_x, aOffDev, NULL, a, a_t, NULL,
+                     t, x, numConstants, constants, stressTensor);
+
+    //PylithScalar stressTensor[4] = {0.0, 0.0, 0.0, 0.0};
+    //firstPiolaKirchhoffStress(_dim, _numS, numA, sOffDisp, sOffDisp_x, s, s_t, s_x, aOff, NULL, a, a_t, NULL,
+    //                          t, x, numConstants, constants, stressTensor);
     for (PylithInt i = 0; i < _dim*_dim; ++i) {
         f1[i] -= stressTensor[i];
     } // for

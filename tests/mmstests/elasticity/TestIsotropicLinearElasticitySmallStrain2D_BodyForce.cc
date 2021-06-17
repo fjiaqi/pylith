@@ -94,8 +94,6 @@ class pylith::mmstests::TestIsotropicLinearElasticitySmallStrain2D_BodyForce :
         const double lambda = density(x,y) * vp(x,y) * vp(x,y) - 2.0*mu;
         const double disp_xx = BODYFORCE / (lambda + 2.0*mu) * (XMAX-x);
         return BODYFORCE + 3.0*BODYFORCE*disp_xx + 1.5*BODYFORCE*disp_xx*disp_xx;
-        //return BODYFORCE + 3.0*BODYFORCE*disp_xx;
-        //return BODYFORCE;
     } // bodyforce_x
 
     static double bodyforce_y(const double x,

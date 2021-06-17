@@ -139,6 +139,7 @@ pylith::testing::MMSTest::testResidual(void) {
     PylithReal norm = 0.0;
     err = DMTSCheckResidual(_problem->getPetscTS(), _problem->getPetscDM(), _problem->getStartTime(), _solutionExactVec,
                             _solutionDotExactVec, tolerance, &norm);
+    //err = DMSNESCheckResidual(_problem->getPetscSNES(), _problem->getPetscDM(), _solutionExactVec, tolerance, &norm);
     if (debug.state()) {
         _solution->view("Solution field");
     } // if
@@ -151,6 +152,46 @@ pylith::testing::MMSTest::testResidual(void) {
 
     PYLITH_METHOD_END;
 } // testResidual
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Verify solve.
+void
+pylith::testing::MMSTest::testSolve(void) {
+    PYLITH_METHOD_BEGIN;
+    PetscErrorCode err = 0;
+    pythia::journal::debug_t debug(GenericComponent::getName());
+    if (debug.state()) {
+        err = PetscOptionsSetValue(NULL, "-dm_plex_print_fem", "2");
+        CPPUNIT_ASSERT(!err);
+        err = PetscOptionsSetValue(NULL, "-dm_plex_print_l2", "2");
+        CPPUNIT_ASSERT(!err);
+    } // if
+    _initialize();
+    CPPUNIT_ASSERT(_solution);
+    if (debug.state()) {
+        _solution->view("Solution field layout", pylith::topology::Field::VIEW_LAYOUT);
+    } // if
+    CPPUNIT_ASSERT(_problem);
+    CPPUNIT_ASSERT(_solutionExactVec);
+    CPPUNIT_ASSERT(_solutionDotExactVec);
+    const PylithReal tolerance = -1.0;
+    PylithReal norm = 0.0;
+    SNES snes;
+    DM dm = _problem->getPetscDM();
+    Vec u;
+    err = TSGetSNES(_problem->getPetscTS(), &snes);
+    err = DMGetGlobalVector(dm, &u);
+    err = VecSet(u, 0.0);
+    err = SNESSetFromOptions(snes);
+    err = SNESSolve(snes, NULL, u);
+    err = SNESView(snes, NULL);
+    err = DMRestoreGlobalVector(dm, &u);
+    if (debug.state()) {
+        _solution->view("Solution field");
+    } // if
+    PYLITH_METHOD_END;
+} // testSolve
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -173,6 +214,7 @@ pylith::testing::MMSTest::testJacobianTaylorSeries(void) {
     PylithReal convergenceRate = 0.0;
     err = DMTSCheckJacobian(_problem->getPetscTS(), _problem->getPetscDM(), _problem->getStartTime(), _solutionExactVec,
                             _solutionDotExactVec, tolerance, &isLinear, &convergenceRate);
+    //err = DMSNESCheckJacobian(_problem->getPetscSNES(), _problem->getPetscDM(), _solutionExactVec, tolerance, &isLinear, &convergenceRate);
     CPPUNIT_ASSERT(!err);
 
     if (_isJacobianLinear) {
