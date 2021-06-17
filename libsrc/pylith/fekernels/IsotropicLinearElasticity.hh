@@ -315,6 +315,298 @@ public:
                                    const PylithScalar constants[],
                                    PylithScalar stress[]);
 
+    /** f1 function for isotropic linear elasticity plane strain WITHOUT reference stress and reference strain.
+     *
+     * Solution fields: [disp(dim), ...]
+     * Auxiliary fields: [..., shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void f1v_smstrain(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar f1[]);
+
+    /** f1 function for isotropic linear elasticity plane strain WITH reference stress and reference strain.
+     *
+     * Solution fields: [disp(dim), ...]
+     * Auxiliary fields: [..., refstress(4), refstrain(4), shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void f1v_refstate_smstrain(const PylithInt dim,
+                      const PylithInt numS,
+                      const PylithInt numA,
+                      const PylithInt sOff[],
+                      const PylithInt sOff_x[],
+                      const PylithScalar s[],
+                      const PylithScalar s_t[],
+                      const PylithScalar s_x[],
+                      const PylithInt aOff[],
+                      const PylithInt aOff_x[],
+                      const PylithScalar a[],
+                      const PylithScalar a_t[],
+                      const PylithScalar a_x[],
+                      const PylithReal t,
+                      const PylithScalar x[],
+                      const PylithInt numConstants,
+                      const PylithScalar constants[],
+                      PylithScalar f1[]);
+
+    /** Jf3_vu entry function for 2-D plane strain isotropic linear elasticity.
+     *
+     * Solution fields: [...]
+     * Auxiliary fields: [..., shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void Jf3vu_smstrain(const PylithInt dim,
+               const PylithInt numS,
+               const PylithInt numA,
+               const PylithInt sOff[],
+               const PylithInt sOff_x[],
+               const PylithScalar s[],
+               const PylithScalar s_t[],
+               const PylithScalar s_x[],
+               const PylithInt aOff[],
+               const PylithInt aOff_x[],
+               const PylithScalar a[],
+               const PylithScalar a_t[],
+               const PylithScalar a_x[],
+               const PylithReal t,
+               const PylithReal s_tshift,
+               const PylithScalar x[],
+               const PylithInt numConstants,
+               const PylithScalar constants[],
+               PylithScalar Jf3[]);
+
+    /** Calculate the first Piola-Kirchhoff stress for 2-D plane strain isotropic linear
+     * elasticity WITHOUT a reference stress and strain.
+     *
+     * Used to output the stress field.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void firstPiolaKirchhoffStress_smstrain(const PylithInt dim,
+                                   const PylithInt numS,
+                                   const PylithInt numA,
+                                   const PylithInt sOff[],
+                                   const PylithInt sOff_x[],
+                                   const PylithScalar s[],
+                                   const PylithScalar s_t[],
+                                   const PylithScalar s_x[],
+                                   const PylithInt aOff[],
+                                   const PylithInt aOff_x[],
+                                   const PylithScalar a[],
+                                   const PylithScalar a_t[],
+                                   const PylithScalar a_x[],
+                                   const PylithReal t,
+                                   const PylithScalar x[],
+                                   const PylithInt numConstants,
+                                   const PylithScalar constants[],
+                                   PylithScalar firstStress[]);
+
+    /** Calculate the first Piola-Kirchhoff stress for 2-D plane strain isotropic linear
+     * elasticity WITH a reference stress/strain.
+     *
+     * Used to output the stress field.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., refstress(4), refstrain(4), shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void firstPiolaKirchhoffStress_refstate_smstrain(const PylithInt dim,
+                                            const PylithInt numS,
+                                            const PylithInt numA,
+                                            const PylithInt sOff[],
+                                            const PylithInt sOff_x[],
+                                            const PylithScalar s[],
+                                            const PylithScalar s_t[],
+                                            const PylithScalar s_x[],
+                                            const PylithInt aOff[],
+                                            const PylithInt aOff_x[],
+                                            const PylithScalar a[],
+                                            const PylithScalar a_t[],
+                                            const PylithScalar a_x[],
+                                            const PylithReal t,
+                                            const PylithScalar x[],
+                                            const PylithInt numConstants,
+                                            const PylithScalar constants[],
+                                            PylithScalar stress[]);
+
+    /** Calculate stress for 2-D plane strain isotropic linear
+     * elasticity WITHOUT a reference stress and strain.
+     *
+     * Used to output the stress field.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void cauchyStress_smstrain(const PylithInt dim,
+                      const PylithInt numS,
+                      const PylithInt numA,
+                      const PylithInt sOff[],
+                      const PylithInt sOff_x[],
+                      const PylithScalar s[],
+                      const PylithScalar s_t[],
+                      const PylithScalar s_x[],
+                      const PylithInt aOff[],
+                      const PylithInt aOff_x[],
+                      const PylithScalar a[],
+                      const PylithScalar a_t[],
+                      const PylithScalar a_x[],
+                      const PylithReal t,
+                      const PylithScalar x[],
+                      const PylithInt numConstants,
+                      const PylithScalar constants[],
+                      PylithScalar stress[]);
+
+    /** Calculate stress for 2-D plane strain isotropic linear
+     * elasticity WITH a reference stress/strain.
+     *
+     * Used to output the stress field.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., refstress(4), refstrain(4), shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void cauchyStress_refstate_smstrain(const PylithInt dim,
+                               const PylithInt numS,
+                               const PylithInt numA,
+                               const PylithInt sOff[],
+                               const PylithInt sOff_x[],
+                               const PylithScalar s[],
+                               const PylithScalar s_t[],
+                               const PylithScalar s_x[],
+                               const PylithInt aOff[],
+                               const PylithInt aOff_x[],
+                               const PylithScalar a[],
+                               const PylithScalar a_t[],
+                               const PylithScalar a_x[],
+                               const PylithReal t,
+                               const PylithScalar x[],
+                               const PylithInt numConstants,
+                               const PylithScalar constants[],
+                               PylithScalar stress[]);
+
+    /** Calculate mean stress for 2-D plane strain isotropic linear
+     * elasticity WITHOUT reference stress and reference strain.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [bulk_modulus(1)]
+     */
+    static
+    void meanStress_smstrain(const PylithInt dim,
+                    const PylithInt numS,
+                    const PylithInt numA,
+                    const PylithInt sOff[],
+                    const PylithInt sOff_x[],
+                    const PylithScalar s[],
+                    const PylithScalar s_t[],
+                    const PylithScalar s_x[],
+                    const PylithInt aOff[],
+                    const PylithInt aOff_x[],
+                    const PylithScalar a[],
+                    const PylithScalar a_t[],
+                    const PylithScalar a_x[],
+                    const PylithReal t,
+                    const PylithScalar x[],
+                    const PylithInt numConstants,
+                    const PylithScalar constants[],
+                    PylithScalar stress[]);
+
+    /** Calculate mean stress for 2-D plane strain isotropic linear
+     * elasticity WITH reference stress and reference strain.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [reference_stress(4), reference_strain(4), bulk_modulus(1)]
+     */
+    static
+    void meanStress_refstate_smstrain(const PylithInt dim,
+                             const PylithInt numS,
+                             const PylithInt numA,
+                             const PylithInt sOff[],
+                             const PylithInt sOff_x[],
+                             const PylithScalar s[],
+                             const PylithScalar s_t[],
+                             const PylithScalar s_x[],
+                             const PylithInt aOff[],
+                             const PylithInt aOff_x[],
+                             const PylithScalar a[],
+                             const PylithScalar a_t[],
+                             const PylithScalar a_x[],
+                             const PylithReal t,
+                             const PylithScalar x[],
+                             const PylithInt numConstants,
+                             const PylithScalar constants[],
+                             PylithScalar stress[]);
+
+    /** Calculate deviatoric stress for 2-D plane strain isotropic linear
+     * elasticity WITHOUT reference stress and strain.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [shear_modulus(1)]
+     */
+    static
+    void deviatoricStress_smstrain(const PylithInt dim,
+                          const PylithInt numS,
+                          const PylithInt numA,
+                          const PylithInt sOff[],
+                          const PylithInt sOff_x[],
+                          const PylithScalar s[],
+                          const PylithScalar s_t[],
+                          const PylithScalar s_x[],
+                          const PylithInt aOff[],
+                          const PylithInt aOff_x[],
+                          const PylithScalar a[],
+                          const PylithScalar a_t[],
+                          const PylithScalar a_x[],
+                          const PylithReal t,
+                          const PylithScalar x[],
+                          const PylithInt numConstants,
+                          const PylithScalar constants[],
+                          PylithScalar stress[]);
+
+    /** Calculate deviatoric stress for 2-D plane strain isotropic linear
+     * elasticity WITH reference stress and strain.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [reference_stress(4), reference_strain(4), shear_modulus(1)]
+     */
+    static
+    void deviatoricStress_refstate_smstrain(const PylithInt dim,
+                                   const PylithInt numS,
+                                   const PylithInt numA,
+                                   const PylithInt sOff[],
+                                   const PylithInt sOff_x[],
+                                   const PylithScalar s[],
+                                   const PylithScalar s_t[],
+                                   const PylithScalar s_x[],
+                                   const PylithInt aOff[],
+                                   const PylithInt aOff_x[],
+                                   const PylithScalar a[],
+                                   const PylithScalar a_t[],
+                                   const PylithScalar a_x[],
+                                   const PylithReal t,
+                                   const PylithScalar x[],
+                                   const PylithInt numConstants,
+                                   const PylithScalar constants[],
+                                   PylithScalar stress[]);
+
 }; // IsotropicLinearElasticityPlaneStrain
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -556,6 +848,294 @@ public:
                                    const PylithInt numConstants,
                                    const PylithScalar constants[],
                                    PylithScalar stress[]);
+
+    /** g1 function for isotropic linear elasticity in 3D WITHOUT reference stress and reference strain.
+     *
+     * Solution fields: [disp(dim), ...]
+     * Auxiliary fields: [..., shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void f1v_smstrain(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar f1[]);
+
+    /** g1 function for isotropic linear elasticity in 3D WITH reference stress and reference strain.
+     *
+     * Solution fields: [disp(dim), ...]
+     * Auxiliary fields: [..., refstress(4), refstrain(4), shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void f1v_refstate_smstrain(const PylithInt dim,
+                      const PylithInt numS,
+                      const PylithInt numA,
+                      const PylithInt sOff[],
+                      const PylithInt sOff_x[],
+                      const PylithScalar s[],
+                      const PylithScalar s_t[],
+                      const PylithScalar s_x[],
+                      const PylithInt aOff[],
+                      const PylithInt aOff_x[],
+                      const PylithScalar a[],
+                      const PylithScalar a_t[],
+                      const PylithScalar a_x[],
+                      const PylithReal t,
+                      const PylithScalar x[],
+                      const PylithInt numConstants,
+                      const PylithScalar constants[],
+                      PylithScalar f1[]);
+
+    /** Jf3_vu entry function for 3-D isotropic linear elasticity.
+     *
+     * Solution fields: [...]
+     * Auxiliary fields: [..., shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void Jf3vu_smstrain(const PylithInt dim,
+               const PylithInt numS,
+               const PylithInt numA,
+               const PylithInt sOff[],
+               const PylithInt sOff_x[],
+               const PylithScalar s[],
+               const PylithScalar s_t[],
+               const PylithScalar s_x[],
+               const PylithInt aOff[],
+               const PylithInt aOff_x[],
+               const PylithScalar a[],
+               const PylithScalar a_t[],
+               const PylithScalar a_x[],
+               const PylithReal t,
+               const PylithReal s_tshift,
+               const PylithScalar x[],
+               const PylithInt numConstants,
+               const PylithScalar constants[],
+               PylithScalar Jf3[]);
+
+    /** Calculate the first Piola-Kirchhoff stress for 3-D isotropic linear elasticity WITHOUT a reference stress and strain.
+     *
+     * Used to output the stress field.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void firstPiolaKirchhoffStress_smstrain(const PylithInt dim,
+                                   const PylithInt numS,
+                                   const PylithInt numA,
+                                   const PylithInt sOff[],
+                                   const PylithInt sOff_x[],
+                                   const PylithScalar s[],
+                                   const PylithScalar s_t[],
+                                   const PylithScalar s_x[],
+                                   const PylithInt aOff[],
+                                   const PylithInt aOff_x[],
+                                   const PylithScalar a[],
+                                   const PylithScalar a_t[],
+                                   const PylithScalar a_x[],
+                                   const PylithReal t,
+                                   const PylithScalar x[],
+                                   const PylithInt numConstants,
+                                   const PylithScalar constants[],
+                                   PylithScalar stress[]);
+
+    /** Calculate the first Piola-Kirchhoff stress for 3-D isotropic linear elasticity WITH a reference stress/strain.
+     *
+     * Used to output the stress field.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., refstress(6), refstrain(6), shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void firstPiolaKirchhoffStress_refstate_smstrain(const PylithInt dim,
+                                            const PylithInt numS,
+                                            const PylithInt numA,
+                                            const PylithInt sOff[],
+                                            const PylithInt sOff_x[],
+                                            const PylithScalar s[],
+                                            const PylithScalar s_t[],
+                                            const PylithScalar s_x[],
+                                            const PylithInt aOff[],
+                                            const PylithInt aOff_x[],
+                                            const PylithScalar a[],
+                                            const PylithScalar a_t[],
+                                            const PylithScalar a_x[],
+                                            const PylithReal t,
+                                            const PylithScalar x[],
+                                            const PylithInt numConstants,
+                                            const PylithScalar constants[],
+                                            PylithScalar stress[]);
+
+    /** Calculate stress for 3-D isotropic linear elasticity WITHOUT a reference stress and strain.
+     *
+     * Used to output the stress field.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void cauchyStress_smstrain(const PylithInt dim,
+                      const PylithInt numS,
+                      const PylithInt numA,
+                      const PylithInt sOff[],
+                      const PylithInt sOff_x[],
+                      const PylithScalar s[],
+                      const PylithScalar s_t[],
+                      const PylithScalar s_x[],
+                      const PylithInt aOff[],
+                      const PylithInt aOff_x[],
+                      const PylithScalar a[],
+                      const PylithScalar a_t[],
+                      const PylithScalar a_x[],
+                      const PylithReal t,
+                      const PylithScalar x[],
+                      const PylithInt numConstants,
+                      const PylithScalar constants[],
+                      PylithScalar stress[]);
+
+    /** Calculate stress for 3-D isotropic linear elasticity WITH a reference stress/strain.
+     *
+     * Used to output the stress field.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., refstress(6), refstrain(6), shear_modulus(1), bulk_modulus(1)]
+     */
+    static
+    void cauchyStress_refstate_smstrain(const PylithInt dim,
+                               const PylithInt numS,
+                               const PylithInt numA,
+                               const PylithInt sOff[],
+                               const PylithInt sOff_x[],
+                               const PylithScalar s[],
+                               const PylithScalar s_t[],
+                               const PylithScalar s_x[],
+                               const PylithInt aOff[],
+                               const PylithInt aOff_x[],
+                               const PylithScalar a[],
+                               const PylithScalar a_t[],
+                               const PylithScalar a_x[],
+                               const PylithReal t,
+                               const PylithScalar x[],
+                               const PylithInt numConstants,
+                               const PylithScalar constants[],
+                               PylithScalar stress[]);
+
+    /** Calculate mean stress for 3-D isotropic linear
+     * elasticity WITHOUT reference stress and reference strain.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [bulk_modulus(1)]
+     */
+    static
+    void meanStress_smstrain(const PylithInt dim,
+                    const PylithInt numS,
+                    const PylithInt numA,
+                    const PylithInt sOff[],
+                    const PylithInt sOff_x[],
+                    const PylithScalar s[],
+                    const PylithScalar s_t[],
+                    const PylithScalar s_x[],
+                    const PylithInt aOff[],
+                    const PylithInt aOff_x[],
+                    const PylithScalar a[],
+                    const PylithScalar a_t[],
+                    const PylithScalar a_x[],
+                    const PylithReal t,
+                    const PylithScalar x[],
+                    const PylithInt numConstants,
+                    const PylithScalar constants[],
+                    PylithScalar stress[]);
+
+    /** Calculate mean stress for 3-D isotropic linear
+     * elasticity WITH reference stress and reference strain.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [reference_stress(6), reference_strain(6), bulk_modulus(1)]
+     */
+    static
+    void meanStress_refstate_smstrain(const PylithInt dim,
+                             const PylithInt numS,
+                             const PylithInt numA,
+                             const PylithInt sOff[],
+                             const PylithInt sOff_x[],
+                             const PylithScalar s[],
+                             const PylithScalar s_t[],
+                             const PylithScalar s_x[],
+                             const PylithInt aOff[],
+                             const PylithInt aOff_x[],
+                             const PylithScalar a[],
+                             const PylithScalar a_t[],
+                             const PylithScalar a_x[],
+                             const PylithReal t,
+                             const PylithScalar x[],
+                             const PylithInt numConstants,
+                             const PylithScalar constants[],
+                             PylithScalar stress[]);
+
+    /** Calculate deviatoric stress for 3-D isotropic linear
+     * elasticity WITHOUT reference stress and strain.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [shear_modulus(1)]
+     */
+    static
+    void deviatoricStress_smstrain(const PylithInt dim,
+                          const PylithInt numS,
+                          const PylithInt numA,
+                          const PylithInt sOff[],
+                          const PylithInt sOff_x[],
+                          const PylithScalar s[],
+                          const PylithScalar s_t[],
+                          const PylithScalar s_x[],
+                          const PylithInt aOff[],
+                          const PylithInt aOff_x[],
+                          const PylithScalar a[],
+                          const PylithScalar a_t[],
+                          const PylithScalar a_x[],
+                          const PylithReal t,
+                          const PylithScalar x[],
+                          const PylithInt numConstants,
+                          const PylithScalar constants[],
+                          PylithScalar stress[]);
+
+    /** Calculate deviatoric stress for 3-D isotropic linear
+     * elasticity WITH reference stress and strain.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [reference_stress(6), reference_strain(6), shear_modulus(1)]
+     */
+    static
+    void deviatoricStress_refstate_smstrain(const PylithInt dim,
+                                   const PylithInt numS,
+                                   const PylithInt numA,
+                                   const PylithInt sOff[],
+                                   const PylithInt sOff_x[],
+                                   const PylithScalar s[],
+                                   const PylithScalar s_t[],
+                                   const PylithScalar s_x[],
+                                   const PylithInt aOff[],
+                                   const PylithInt aOff_x[],
+                                   const PylithScalar a[],
+                                   const PylithScalar a_t[],
+                                   const PylithScalar a_x[],
+                                   const PylithReal t,
+                                   const PylithScalar x[],
+                                   const PylithInt numConstants,
+                                   const PylithScalar constants[],
+                                   PylithScalar stress[]);         
 
 }; // IsotropicLinearElasticity3D
 

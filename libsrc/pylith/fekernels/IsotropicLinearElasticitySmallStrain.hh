@@ -74,7 +74,7 @@
 #include "pylith/utils/types.hh"
 
 // ---------------------------------------------------------------------------------------------------------------------
-/// Kernels specific to isotropic, linearly elasticity plane strain.
+/// Kernels specific to isotropic, linearly elasticity plane strain, with small strain formulation.
 class pylith::fekernels::IsotropicLinearElasticitySmallStrainPlaneStrain {
     // PUBLIC MEMBERS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
@@ -374,7 +374,7 @@ public:
 }; // IsotropicLinearElasticitySmallStrainPlaneStrain
 
 // ---------------------------------------------------------------------------------------------------------------------
-/// Kernels specific to isotropic, linearly elasticity in 3D.
+/// Kernels specific to isotropic, linearly elasticity in 3D, with small strain formulation.
 class pylith::fekernels::IsotropicLinearElasticitySmallStrain3D {
     // PUBLIC MEMBERS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:

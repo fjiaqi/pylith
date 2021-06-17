@@ -185,7 +185,7 @@ pylith::testing::MMSTest::testSolve(void) {
     err = VecSet(u, 0.0);
     err = SNESSetFromOptions(snes);
     err = SNESSolve(snes, NULL, u);
-    err = SNESView(snes, NULL);
+    //err = SNESView(snes, NULL);
     err = DMRestoreGlobalVector(dm, &u);
     if (debug.state()) {
         _solution->view("Solution field");

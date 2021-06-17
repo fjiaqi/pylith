@@ -30,7 +30,6 @@ subpkginclude_HEADERS = \
 	AuxiliaryFactoryPoroelastic.hh \
 	DerivedFactoryElasticity.hh \
 	IsotropicLinearElasticity.hh \
-	IsotropicLinearElasticitySmallStrain.hh \
 	IsotropicLinearMaxwell.hh \
 	IsotropicLinearGenMaxwell.hh \
 	IsotropicPowerLaw.hh \

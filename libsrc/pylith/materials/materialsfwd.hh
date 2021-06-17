@@ -38,7 +38,6 @@ namespace pylith {
 
         class RheologyElasticity;
         class IsotropicLinearElasticity;
-        class IsotropicLinearElasticitySmallStrain;
         class IsotropicLinearMaxwell;
         class IsotropicLinearGenMaxwell;
         class IsotropicPowerLaw;
