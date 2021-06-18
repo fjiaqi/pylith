@@ -21,6 +21,7 @@
 #include "OutputSolnBoundary.hh" // implementation of class methods
 
 #include "pylith/topology/Field.hh" // USES Field
+#include "pylith/topology/FieldOps.hh" // USES FieldOps
 #include "pylith/topology/Mesh.hh" // USES Mesh
 #include "pylith/topology/MeshOps.hh" // USES createLowerDimMesh()
 #include "pylith/meshio/OutputSubfield.hh" // USES OutputSubfield
@@ -107,7 +108,7 @@ pylith::meshio::OutputSolnBoundary::_writeSolnStep(const PylithReal t,
         assert(_boundaryMesh);
     } // if
 
-    const pylith::string_vector& subfieldNames = _expandSubfieldNames(solution);
+    const pylith::string_vector& subfieldNames = pylith::topology::FieldOps::getSubfieldNamesDomain(solution);
     PetscVec solutionVector = solution.outputVector();assert(solutionVector);
 
     _openSolnStep(t, *_boundaryMesh);
@@ -119,7 +120,7 @@ pylith::meshio::OutputSolnBoundary::_writeSolnStep(const PylithReal t,
         subfield = OutputObserver::_getSubfield(solution, *_boundaryMesh, subfieldNames[iField].c_str());assert(subfield);
         subfield->project(solutionVector);
 
-        OutputObserver::_appendField(0.0, *subfield);
+        OutputObserver::_appendField(t, *subfield);
     } // for
     _closeSolnStep();
 
