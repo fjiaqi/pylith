@@ -35,6 +35,9 @@ class IsotropicLinearElasticity(RheologyElasticity, ModuleLinearElasticity):
     useReferenceState = pythia.pyre.inventory.bool("use_reference_state", default=False)
     useReferenceState.meta['tip'] = "Use reference stress/strain state."
 
+    useSmallStrain = pythia.pyre.inventory.bool("use_small_strain", default=False)
+    useSmallStrain.meta['tip'] = "Use small strain formulation."
+
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
     def __init__(self, name="isotropiclinearelasticity"):
@@ -51,6 +54,7 @@ class IsotropicLinearElasticity(RheologyElasticity, ModuleLinearElasticity):
         RheologyElasticity.preinitialize(self, problem)
 
         ModuleLinearElasticity.useReferenceState(self, self.useReferenceState)
+        ModuleLinearElasticity.useSmallStrain(self, self.useSmallStrain)
         return
 
     # PRIVATE METHODS ////////////////////////////////////////////////////

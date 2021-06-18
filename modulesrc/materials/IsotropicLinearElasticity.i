@@ -50,6 +50,18 @@ public:
              */
             bool useReferenceState(void) const;
 
+            /** Use small strain formulation?
+             *
+             * @param[in] value Flag indicating to use small strain formulation.
+             */
+            void useSmallStrain(const bool value);
+
+            /** Use small strain formulation?
+             *
+             * @returns True if using small strain formulation, false otherwise.
+             */
+            bool useReferenceState(void) const;
+
             /** Get auxiliary factory associated with physics.
              *
              * @return Auxiliary factory for physics object.
