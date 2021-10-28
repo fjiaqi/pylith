@@ -34,21 +34,21 @@
 
 namespace pylith {
     namespace mmstests {
-        class TestIsotropicLinearElasticity2D_BodyForce;
+        class TestIsotropicLinearElasticity2D_SmallStrainBodyForce;
 
-        class TestIsotropicLinearElasticity2D_BodyForce_TriP2;
-        class TestIsotropicLinearElasticity2D_BodyForce_TriP3;
-        class TestIsotropicLinearElasticity2D_BodyForce_TriP4;
+        class TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP2;
+        class TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP3;
+        class TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP4;
 
-        class TestIsotropicLinearElasticity2D_BodyForce_QuadQ2;
-        class TestIsotropicLinearElasticity2D_BodyForce_QuadQ3;
-        class TestIsotropicLinearElasticity2D_BodyForce_QuadQ4;
+        class TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ2;
+        class TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ3;
+        class TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ4;
 
     } // materials
 } // pylith
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce :
+class pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce :
     public pylith::mmstests::TestIsotropicLinearElasticity {
     static const double LENGTHSCALE;
     static const double TIMESCALE;
@@ -231,22 +231,22 @@ protected:
         err = PetscDSSetExactSolution(prob, 0, solnkernel_disp, NULL);CPPUNIT_ASSERT(!err);
     } // _setExactSolution
 
-}; // TestIsotropicLinearElasticity2D_BodyForce
-const double pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce::LENGTHSCALE = 1.0e+3;
-const double pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce::TIMESCALE = 2.0;
-const double pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce::PRESSURESCALE = 2.25e+10;
-const double pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce::BODYFORCE = 5.0e+3;
-const double pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce::XMAX = 4.0e+3;
+}; // TestIsotropicLinearElasticity2D_SmallStrainBodyForce
+const double pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce::LENGTHSCALE = 1.0e+3;
+const double pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce::TIMESCALE = 2.0;
+const double pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce::PRESSURESCALE = 2.25e+10;
+const double pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce::BODYFORCE = 5.0e+3;
+const double pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce::XMAX = 4.0e+3;
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP2 :
-    public pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticity2D_BodyForce_TriP2,
+class pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP2 :
+    public pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP2,
                            TestIsotropicLinearElasticity);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticity2D_BodyForce::setUp();
+        TestIsotropicLinearElasticity2D_SmallStrainBodyForce::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/tri.mesh";
@@ -267,18 +267,18 @@ class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP2 :
 
     } // setUp
 
-}; // TestIsotropicLinearElasticity2D_BodyForce_TriP2
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP2);
+}; // TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP2
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP2);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP3 :
-    public pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticity2D_BodyForce_TriP3,
+class pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP3 :
+    public pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP3,
                            TestIsotropicLinearElasticity);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticity2D_BodyForce::setUp();
+        TestIsotropicLinearElasticity2D_SmallStrainBodyForce::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/tri.mesh";
@@ -299,17 +299,17 @@ class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP3 :
 
     } // setUp
 
-}; // TestIsotropicLinearElasticity2D_BodyForce_TriP3
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP3);
+}; // TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP3
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce_TriP3);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ2 :
-    public pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticity2D_BodyForce_QuadQ2,  TestIsotropicLinearElasticity);
+class pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ2 :
+    public pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ2,  TestIsotropicLinearElasticity);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticity2D_BodyForce::setUp();
+        TestIsotropicLinearElasticity2D_SmallStrainBodyForce::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/quad.mesh";
@@ -330,17 +330,17 @@ class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ2 :
 
     } // setUp
 
-}; // TestIsotropicLinearElasticity2D_BodyForce_QuadQ2
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ2);
+}; // TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ2
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ2);
 
 // ---------------------------------------------------------------------------------------------------------------------
-class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ3 :
-    public pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce {
-    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticity2D_BodyForce_QuadQ3,  TestIsotropicLinearElasticity);
+class pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ3 :
+    public pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce {
+    CPPUNIT_TEST_SUB_SUITE(TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ3,  TestIsotropicLinearElasticity);
     CPPUNIT_TEST_SUITE_END();
 
     void setUp(void) {
-        TestIsotropicLinearElasticity2D_BodyForce::setUp();
+        TestIsotropicLinearElasticity2D_SmallStrainBodyForce::setUp();
         CPPUNIT_ASSERT(_data);
 
         _data->meshFilename = "data/quad.mesh";
@@ -361,7 +361,7 @@ class pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ3 :
 
     } // setUp
 
-}; // TestIsotropicLinearElasticity2D_BodyForce_QuadQ3
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ3);
+}; // TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ3
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearElasticity2D_SmallStrainBodyForce_QuadQ3);
 
 // End of file
