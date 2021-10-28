@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2017 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ----------------------------------------------------------------------
 //
@@ -75,7 +75,7 @@ public:
      * @param[in] solution Solution field.
      * @returns Constraint if applicable, otherwise NULL.
      */
-    pylith::feassemble::Constraint* createConstraint(const pylith::topology::Field& solution);
+    std::vector<pylith::feassemble::Constraint*> createConstraints(const pylith::topology::Field& solution);
 
     /** Create auxiliary field.
      *
@@ -135,6 +135,33 @@ protected:
      */
     void _updateSlipRate(pylith::topology::Field* auxiliaryField,
                          const double t);
+
+    /** Update slip acceleration subfield in auxiliary field at beginning of time step.
+     *
+     * @param[out] auxiliaryField Auxiliary field.
+     * @param[in] t Current time.
+     */
+    void _updateSlipAcceleration(pylith::topology::Field* auxiliaryField,
+                                 const double t);
+
+    // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
+private:
+
+    /** Set kernels for residual.
+     *
+     * @param[out] integrator Integrator for material.
+     * @param[in] solution Solution field.
+     */
+    void _setKernelsResidual(pylith::feassemble::IntegratorInterface* integrator,
+                             const pylith::topology::Field& solution) const;
+
+    /** Set kernels for Jacobian.
+     *
+     * @param[out] integrator Integrator for material.
+     * @param[in] solution Solution field.
+     */
+    void _setKernelsJacobian(pylith::feassemble::IntegratorInterface* integrator,
+                             const pylith::topology::Field& solution) const;
 
     // PRIVATE TYPEDEFS ////////////////////////////////////////////////////////////////////////////////////////////////
 private:

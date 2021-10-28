@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, Rice University
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2018 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ======================================================================
 //
@@ -249,6 +249,12 @@ protected:
 
     int _lhsJacobianTriggers; // Triggers for needing new LHS Jacobian.
     int _lhsJacobianLumpedTriggers; // Triggers for needing new LHS lumped Jacobian.
+
+    /// True if we have kernels for operation, false otherwise.
+    bool _hasRHSResidual;
+    bool _hasLHSResidual;
+    bool _hasLHSJacobian;
+    bool _hasLHSJacobianLumped;
 
     /// True if we need to recompute Jacobian for operator, false otherwise.
     /// Default is false;

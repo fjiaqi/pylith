@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2016 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ======================================================================
 //
@@ -21,11 +21,11 @@
 #include "FaultCohesiveStub.hh" // implementation of object methods
 
 #include "pylith/testing/StubMethodTracker.hh" // USES StubMethodTracker
+#include "pylith/utils/error.hh" // USES PYLITH_METHOD_*
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::faults::FaultCohesiveStub::FaultCohesiveStub(void)
-{}
+pylith::faults::FaultCohesiveStub::FaultCohesiveStub(void) {}
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -55,12 +55,14 @@ pylith::faults::FaultCohesiveStub::createIntegrator(const pylith::topology::Fiel
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Create constraint and set kernels.
-pylith::feassemble::Constraint*
-pylith::faults::FaultCohesiveStub::createConstraint(const pylith::topology::Field& solution) {
-    pylith::testing::StubMethodTracker tracker("pylith::faults::FaultCohesiveStub::createConstraint");
+std::vector<pylith::feassemble::Constraint*>
+pylith::faults::FaultCohesiveStub::createConstraints(const pylith::topology::Field& solution) {
+    PYLITH_METHOD_BEGIN;
+    pylith::testing::StubMethodTracker tracker("pylith::faults::FaultCohesiveStub::createConstraints");
+    std::vector<pylith::feassemble::Constraint*> constraintArray;
 
-    return NULL;
-} // createConstraint
+    PYLITH_METHOD_RETURN(constraintArray);
+} // createConstraints
 
 
 // ---------------------------------------------------------------------------------------------------------------------

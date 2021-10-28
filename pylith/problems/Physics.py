@@ -2,14 +2,14 @@
 #
 # Brad T. Aagaard, U.S. Geological Survey
 # Charles A. Williams, GNS Science
-# Matthew G. Knepley, University of Chicago
+# Matthew G. Knepley, University at Buffalo
 #
 # This code was developed as part of the Computational Infrastructure
 # for Geodynamics (http://geodynamics.org).
 #
-# Copyright (c) 2010-2016 University of California, Davis
+# Copyright (c) 2010-2021 University of California, Davis
 #
-# See COPYING for license information.
+# See LICENSE.md for license information.
 #
 # ----------------------------------------------------------------------
 #
@@ -88,7 +88,7 @@ class Physics(PetscComponent, ModulePhysics):
                 quadOrder = subfield.quadOrder
             ModulePhysics.setAuxiliarySubfieldDiscretization(self, fieldName, subfield.basisOrder, quadOrder,
                                                              subfield.dimension, subfield.cellBasis,
-                                                             subfield.isBasisContinuous, subfield.feSpace)
+                                                             subfield.feSpace, subfield.isBasisContinuous)
 
         for subfield in self.derivedSubfields.components():
             fieldName = subfield.aliases[-1]
@@ -99,7 +99,7 @@ class Physics(PetscComponent, ModulePhysics):
                 quadOrder = subfield.quadOrder
             ModulePhysics.setDerivedSubfieldDiscretization(self, fieldName, subfield.basisOrder, quadOrder,
                                                            subfield.dimension, subfield.cellBasis,
-                                                           subfield.isBasisContinuous, subfield.feSpace)
+                                                           subfield.feSpace, subfield.isBasisContinuous)
 
         for observer in self.observers.components():
             observer.preinitialize(problem, identifier)

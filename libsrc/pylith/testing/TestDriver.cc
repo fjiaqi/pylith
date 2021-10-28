@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2015 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ======================================================================
 //
@@ -54,12 +54,14 @@ public:
              * @param[in] argv Array of input arguments.
              * @param[in] petscOptions Array of PETSc options to set.
              * @param[in] mallocDump Set malloc debug dump.
+             * @param[in] checkStack Set checkstack.
              */
             static
             int initializePetsc(int argc,
                                 char* argv[],
                                 const std::vector<std::string>& petscOptions,
-                                const bool mallocDump);
+                                const bool mallocDump,
+				const bool checkStack);
 
             /** Add journal.
              *
@@ -105,7 +107,8 @@ public:
 pylith::testing::TestDriver::TestDriver() :
     _showHelp(false),
     _listTests(false),
-    _mallocDump(true) {}
+    _mallocDump(true),
+    _checkStack(true) {}
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -128,7 +131,7 @@ pylith::testing::TestDriver::run(int argc,
     CppUnit::TestResultCollector result;
     try {
         // Initialize PETSc
-        int err = _TestDriver::initializePetsc(argc, argv, _petscOptions, _mallocDump);CHKERRQ(err);
+      int err = _TestDriver::initializePetsc(argc, argv, _petscOptions, _mallocDump, _checkStack);CHKERRQ(err);
 
         // Initialize Python (to eliminate need to initialize when
         // parsing units in spatial databases).
@@ -177,7 +180,10 @@ pylith::testing::TestDriver::run(int argc,
     } // catch
 
     if (!_mallocDump) {
-        std::cout << "WARNING -malloc dump is OFF\n" << std::endl;
+        std::cout << "WARNING PETSc option -malloc dump is OFF\n" << std::endl;
+    } // if
+    if (!_checkStack) {
+        std::cout << "WARNING PETSc option -checkstack is OFF\n" << std::endl;
     } // if
 
     return (result.wasSuccessful() ? 0 : 1);
@@ -215,6 +221,7 @@ pylith::testing::TestDriver::_parseArgs(int argc,
             break;
         case 'q':
             _mallocDump = false;
+	    _checkStack = false;
             break;
         case 't': {
             _tests.clear();
@@ -264,6 +271,7 @@ pylith::testing::_TestDriver::printHelp(void) {
               << "    --quiet           Turn off dump of leaked memory.\n"
               << "    --tests           Comma separated list of tests to run (default is all tests).\n"
               << "    --petsc ARG=VALUE Arguments to pass to PETSc. May be repeated for multiple arguments.\n"
+              << "    --journal.TYPE=COMPONENT Activate journal (TYPE=[info,debug,warning,error]) for COMPONENT. May be repeated with different components.\n"
               << std::endl;
 } // printHelp
 
@@ -274,10 +282,15 @@ int
 pylith::testing::_TestDriver::initializePetsc(int argc,
                                               char* argv[],
                                               const std::vector<std::string>& petscOptions,
-                                              const bool mallocDump) {
-    int argcP = 1;
-    char** argvP = new char*[1];
+                                              const bool mallocDump,
+					      const bool checkStack) {
+    int argcP = (checkStack) ? 2 : 1;
+    char** argvP = new char*[argcP+1];
     argvP[0] = argv[0];
+    if (checkStack) {
+      argvP[1] = (char*)"-checkstack";
+    } // if
+    argvP[argcP] = NULL; // C standard is argv[argc] == NULL.
     PetscErrorCode err = PetscInitialize(&argcP, &argvP, NULL, NULL);CHKERRQ(err);
     delete[] argvP;argvP = NULL;
 
@@ -337,8 +350,7 @@ pylith::testing::_TestDriver::activateJournals(const TestDriver::journals_t& jou
             break;
         } // INFO
         default:
-            ;
-            // PYLITH_JOURNAL_LOGICERROR("Unknown journal category '"<<category<<"'.");
+            PYLITH_JOURNAL_LOGICERROR("Unknown journal category '"<<category<<"'.");
         } // switch
     } // for
 } // activateJournal

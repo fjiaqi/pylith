@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2016 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ----------------------------------------------------------------------
 //
@@ -78,16 +78,16 @@ public:
              * @param[in] quadOrder Order of quadrature rule.
              * @param[in] dimension Dimension of points for discretization.
              * @param[in] cellBasis Type of basis functions to use (e.g., simplex, tensor, or default).
-             * @param[in] isBasisContinuous True if basis is continuous.
              * @param[in] feSpace Finite-element space.
+             * @param[in] isBasisContinuous True if basis is continuous.
              */
             void setAuxiliarySubfieldDiscretization(const char* subfieldName,
                                                     const int basisOrder,
                                                     const int quadOrder,
                                                     const int dimension,
                                                     const pylith::topology::FieldBase::CellBasis cellBasis,
-                                                    const bool isBasisContinuous,
-                                                    const pylith::topology::FieldBase::SpaceEnum feSpace);
+                                                    const pylith::topology::FieldBase::SpaceEnum feSpace,
+                                                    const bool isBasisContinuous);
 
             /** Set discretization information for derived subfield.
              *
@@ -96,16 +96,16 @@ public:
              * @param[in] quadOrder Order of quadrature rule.
              * @param[in] dimension Dimension of points for discretization.
              * @param[in] cellBasis Type of basis functions to use (e.g., simplex, tensor, or default).
-             * @param[in] isBasisContinuous True if basis is continuous.
              * @param[in] feSpace Finite-element space.
+             * @param[in] isBasisContinuous True if basis is continuous.
              */
             void setDerivedSubfieldDiscretization(const char* subfieldName,
                                                   const int basisOrder,
                                                   const int quadOrder,
                                                   const int dimension,
                                                   const pylith::topology::FieldBase::CellBasis cellBasis,
-                                                  const bool isBasisContinuous,
-                                                  const pylith::topology::FieldBase::SpaceEnum feSpace);
+                                                  const pylith::topology::FieldBase::SpaceEnum feSpace,
+                                                  const bool isBasisContinuous);
 
             /** Register observer to receive notifications.
              *
@@ -157,7 +157,7 @@ public:
              * @returns Constraint if applicable, otherwise NULL.
              */
             virtual
-            pylith::feassemble::Constraint* createConstraint(const pylith::topology::Field& solution) = 0;
+            std::vector<pylith::feassemble::Constraint*> createConstraints(const pylith::topology::Field& solution) = 0;
 
             /** Create auxiliary field.
              *

@@ -4,14 +4,14 @@ dnl ----------------------------------------------------------------------
 dnl
 dnl Brad T. Aagaard, U.S. Geological Survey
 dnl Charles A. Williams, GNS Science
-dnl Matthew G. Knepley, University of Chicago
+dnl Matthew G. Knepley, University at Buffalo
 dnl
 dnl This code was developed as part of the Computational Infrastructure
 dnl for Geodynamics (http://geodynamics.org).
 dnl
-dnl Copyright (c) 2010-2017 University of California, Davis
+dnl Copyright (c) 2010-2021 University of California, Davis
 dnl
-dnl See COPYING for license information.
+dnl See LICENSE.md for license information.
 dnl
 dnl ----------------------------------------------------------------------
 dnl Process this file with autoconf to produce a configure script.
@@ -109,7 +109,7 @@ AC_CHECK_HEADER([mpi.h], [], [AC_MSG_ERROR([header 'mpi.h' not found])])
 
 dnl PETSC
 AC_LANG(C)
-CIT_PATH_PETSC([3.15.0])
+CIT_PATH_PETSC([3.16.0])
 CIT_HEADER_PETSC
 CIT_CHECK_LIB_PETSC
 
@@ -144,7 +144,6 @@ if test "$enable_hdf5" = "yes" ; then
   CIT_HDF5_LIB
   CIT_HDF5_LIB_PARALLEL
 
-  CIT_PYTHON_MODULE([six],[1.0.0])
   CIT_PYTHON_MODULE([h5py],[2.0.0])
 fi
 

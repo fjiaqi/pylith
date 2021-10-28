@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2015 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ----------------------------------------------------------------------
 //
@@ -32,6 +32,7 @@
 #include "pylith/fekernels/Elasticity.hh" // USES Elasticity kernels
 #include "pylith/fekernels/DispVel.hh" // USES DispVel kernels
 
+#include "pylith/utils/error.hh" // USES PYLITH_METHOD_*
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
 
 #include "spatialdata/spatialdb/GravityField.hh" // USES GravityField
@@ -44,6 +45,7 @@
 typedef pylith::feassemble::IntegratorDomain::ResidualKernels ResidualKernels;
 typedef pylith::feassemble::IntegratorDomain::JacobianKernels JacobianKernels;
 typedef pylith::feassemble::IntegratorDomain::ProjectKernels ProjectKernels;
+typedef pylith::feassemble::Integrator::JacobianPart JacobianPart;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
@@ -139,8 +141,8 @@ pylith::materials::IncompressibleElasticity::createIntegrator(const pylith::topo
     integrator->setLabelName(pylith::topology::Mesh::getCellsLabelName());
     integrator->setLabelValue(getMaterialId());
 
-    _setKernelsLHSResidual(integrator, solution);
-    _setKernelsLHSJacobian(integrator, solution);
+    _setKernelsResidual(integrator, solution);
+    _setKernelsJacobian(integrator, solution);
     // No state variables.
     _setKernelsDerivedField(integrator, solution);
 
@@ -163,7 +165,7 @@ pylith::materials::IncompressibleElasticity::createAuxiliaryField(const pylith::
     pylith::materials::AuxiliaryFactoryElasticity* auxiliaryFactory = _rheology->getAuxiliaryFactory();assert(auxiliaryFactory);
 
     assert(_normalizer);
-    auxiliaryFactory->initialize(auxiliaryField, *_normalizer, domainMesh.dimension());
+    auxiliaryFactory->initialize(auxiliaryField, *_normalizer, domainMesh.getDimension());
 
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the FE kernels.
 
@@ -212,7 +214,7 @@ pylith::materials::IncompressibleElasticity::createDerivedField(const pylith::to
     derivedField->setLabel("Elasticity derived field");
 
     assert(_normalizer);
-    _derivedFactory->initialize(derivedField, *_normalizer, domainMesh.dimension());
+    _derivedFactory->initialize(derivedField, *_normalizer, domainMesh.getDimension());
     _derivedFactory->addSubfields();
 
     derivedField->subfieldsSetup();
@@ -252,64 +254,64 @@ pylith::materials::IncompressibleElasticity::_getDerivedFactory(void) {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Set kernels for RHS residual G(t,s).
+// Set kernels for residual.
 void
-pylith::materials::IncompressibleElasticity::_setKernelsLHSResidual(pylith::feassemble::IntegratorDomain* integrator,
-                                                                    const topology::Field& solution) const {
+pylith::materials::IncompressibleElasticity::_setKernelsResidual(pylith::feassemble::IntegratorDomain* integrator,
+                                                                 const pylith::topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_setFEKernelsLHSResidual(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
+    PYLITH_COMPONENT_DEBUG("_setFEKernelsResidual(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
-
-    std::vector<ResidualKernels> kernels(2);
-    PetscPointFunc f0u = NULL;
+    const spatialdata::geocoords::CoordSys* coordsys = solution.getMesh().getCoordSys();
 
     const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
     const int bitGravity = _gravityField ? 0x2 : 0x0;
     const int bitUse = bitBodyForce | bitGravity;
 
+    PetscPointFunc r0 = NULL;
     switch (bitUse) {
     case 0x1:
-        f0u = pylith::fekernels::Elasticity::g0v_bodyforce;
+        r0 = pylith::fekernels::Elasticity::g0v_bodyforce;
         break;
     case 0x2:
-        f0u = pylith::fekernels::Elasticity::g0v_grav;
+        r0 = pylith::fekernels::Elasticity::g0v_grav;
         break;
     case 0x3:
-        f0u = pylith::fekernels::Elasticity::g0v_gravbodyforce;
+        r0 = pylith::fekernels::Elasticity::g0v_gravbodyforce;
         break;
     case 0x0:
         break;
     default:
-        PYLITH_COMPONENT_LOGICERROR("Unknown case (bitUse=" << bitUse << ") for IncompressibleElasticity RHS residual kernels.");
+        PYLITH_COMPONENT_LOGICERROR("Unknown case (bitUse=" << bitUse << ") for residual kernels.");
     } // switch
 
     // Displacement
+    const PetscPointFunc f0u = r0;
     const PetscPointFunc f1u = _rheology->getKernelResidualStress(coordsys);
 
     // Pressure
     const PetscPointFunc f0p = _rheology->getKernelResidualPressure(coordsys);
     const PetscPointFunc f1p = NULL;
 
-    kernels[0] = ResidualKernels("displacement", f0u, f1u);
-    kernels[1] = ResidualKernels("pressure", f0p, f1p);
+    std::vector<ResidualKernels> kernels(2);
+    kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::RESIDUAL_LHS, f0u, f1u);
+    kernels[1] = ResidualKernels("pressure", pylith::feassemble::Integrator::RESIDUAL_LHS, f0p, f1p);
 
     assert(integrator);
-    integrator->setKernelsLHSResidual(kernels);
+    integrator->setKernelsResidual(kernels, solution);
 
     PYLITH_METHOD_END;
-} // _setKernelsLHSResidual
+} // _setKernelsResidual
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Set kernels for LHS Jacobian F(t,s,\dot{s}).
+// Set kernels for Jacobian.
 void
-pylith::materials::IncompressibleElasticity::_setKernelsLHSJacobian(pylith::feassemble::IntegratorDomain* integrator,
-                                                                    const topology::Field& solution) const {
+pylith::materials::IncompressibleElasticity::_setKernelsJacobian(pylith::feassemble::IntegratorDomain* integrator,
+                                                                 const topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_setFEKernelsLHSJacobian(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
+    PYLITH_COMPONENT_DEBUG("_setFEKernelsJacobian(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.getMesh().getCoordSys();
 
     std::vector<JacobianKernels> kernels(4);
 
@@ -333,16 +335,17 @@ pylith::materials::IncompressibleElasticity::_setKernelsLHSJacobian(pylith::feas
     const PetscPointJac Jf2pp = NULL;
     const PetscPointJac Jf3pp = NULL;
 
-    kernels[0] = JacobianKernels("displacement", "displacement", Jf0uu, Jf1uu, Jf2uu, Jf3uu);
-    kernels[1] = JacobianKernels("displacement", "pressure", Jf0up, Jf1up, Jf2up, Jf3up);
-    kernels[2] = JacobianKernels("pressure", "displacement", Jf0pu, Jf1pu, Jf2pu, Jf3pu);
-    kernels[3] = JacobianKernels("pressure", "pressure", Jf0pp, Jf1pp, Jf2pp, Jf3pp);
+    const JacobianPart jacobianPart = pylith::feassemble::Integrator::JACOBIAN_LHS;
+    kernels[0] = JacobianKernels("displacement", "displacement", jacobianPart, Jf0uu, Jf1uu, Jf2uu, Jf3uu);
+    kernels[1] = JacobianKernels("displacement", "pressure", jacobianPart, Jf0up, Jf1up, Jf2up, Jf3up);
+    kernels[2] = JacobianKernels("pressure", "displacement", jacobianPart, Jf0pu, Jf1pu, Jf2pu, Jf3pu);
+    kernels[3] = JacobianKernels("pressure", "pressure", jacobianPart, Jf0pp, Jf1pp, Jf2pp, Jf3pp);
 
     assert(integrator);
-    integrator->setKernelsLHSJacobian(kernels);
+    integrator->setKernelsJacobian(kernels, solution);
 
     PYLITH_METHOD_END;
-} // setKernelsLHSJacobian
+} // setKernelsJacobian
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -353,7 +356,7 @@ pylith::materials::IncompressibleElasticity::_setKernelsUpdateStateVars(pylith::
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsUpdateStateVars(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.getMesh().getCoordSys();
     assert(coordsys);
 
     std::vector<ProjectKernels> kernels;
@@ -373,7 +376,7 @@ pylith::materials::IncompressibleElasticity::_setKernelsDerivedField(pylith::fea
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsDerivedField(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.getMesh().getCoordSys();
     assert(coordsys);
 
     std::vector<ProjectKernels> kernels(2);

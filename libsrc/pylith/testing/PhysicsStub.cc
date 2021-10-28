@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2016 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ======================================================================
 //
@@ -22,6 +22,7 @@
 
 #include "pylith/feassemble/AuxiliaryFactory.hh" // USES AuxiliaryFactory
 #include "pylith/testing/StubMethodTracker.hh" // USES StubMethodTracker
+#include "pylith/utils/error.hh" // USES PYLITH_METHOD_*
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Constructor.
@@ -69,13 +70,13 @@ pylith::problems::PhysicsStub::createIntegrator(const pylith::topology::Field& s
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Create constraint and set kernels.
-pylith::feassemble::Constraint*
-pylith::problems::PhysicsStub::createConstraint(const pylith::topology::Field& solution) {
-    pylith::testing::StubMethodTracker tracker("pylith::problems::PhysicsStub::createConstraint");
-
-    return NULL;
-} // createConstraint
-
+std::vector<pylith::feassemble::Constraint*>
+pylith::problems::PhysicsStub::createConstraints(const pylith::topology::Field& solution) {
+    pylith::testing::StubMethodTracker tracker("pylith::problems::PhysicsStub::createConstraints");
+    std::vector<pylith::feassemble::Constraint*> constraintArray;
+    
+    PYLITH_METHOD_RETURN(constraintArray);
+} // createConstraints
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Create auxiliary field.

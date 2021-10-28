@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2015 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ---------------------------------------------------------------------------------------------------------------------
 //
@@ -20,6 +20,7 @@
 
 #include "Material.hh" // implementation of object methods
 
+#include "pylith/utils/error.hh" // USES PYLITH_METHOD_*
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
 
 #include <cassert> // USES assert()
@@ -30,9 +31,7 @@
 pylith::materials::Material::Material(void) :
     _gravityField(NULL),
     _materialId(0),
-    _descriptiveLabel("") {
-    //
-} // constructor
+    _descriptiveLabel("") {}
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -60,7 +59,7 @@ pylith::materials::Material::deallocate(void) {
 // Set value of label material-id used to identify material cells.
 void
 pylith::materials::Material::setMaterialId(const int value) {
-    PYLITH_COMPONENT_DEBUG("setMmaterialId(value="<<value<<")");
+    PYLITH_COMPONENT_DEBUG("setMaterialId(value="<<value<<")");
 
     _materialId = value;
 } // setMaterialId
@@ -102,10 +101,13 @@ pylith::materials::Material::setGravityField(spatialdata::spatialdb::GravityFiel
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Create constraint and set kernels.
-pylith::feassemble::Constraint*
-pylith::materials::Material::createConstraint(const pylith::topology::Field& solution) {
-    return NULL;
-} // createConstraint
+std::vector<pylith::feassemble::Constraint*>
+pylith::materials::Material::createConstraints(const pylith::topology::Field& solution) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("createConstraints(solution="<<solution.getLabel()<<") empty method");
+    std::vector<pylith::feassemble::Constraint*> constraintArray;
 
+    PYLITH_METHOD_RETURN(constraintArray);
+} // createConstraints
 
 // End of file

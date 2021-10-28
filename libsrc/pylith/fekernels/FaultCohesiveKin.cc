@@ -4,14 +4,14 @@
  *
  * Brad T. Aagaard, U.S. Geological Survey
  * Charles A. Williams, GNS Science
- * Matthew G. Knepley, University of Chicago
+ * Matthew G. Knepley, University at Buffalo
  *
  * This code was developed as part of the Computational Infrastructure
  * for Geodynamics (http:*geodynamics.org).
  *
- * Copyright (c) 2010-2015 University of California, Davis
+ * Copyright (c) 2010-2021 University of California, Davis
  *
- * See COPYING for license information.
+ * See LICENSE.md for license information.
  *
  * ----------------------------------------------------------------------
  */
@@ -19,6 +19,8 @@
 #include <portinfo>
 
 #include "pylith/fekernels/FaultCohesiveKin.hh"
+
+#include "pylith/fekernels/BoundaryDirections.hh" // USES tangential_directions()
 
 #include <cassert> // USES assert()
 
@@ -64,22 +66,6 @@ public:
             static PylithInt lagrange_sOff(const PylithInt sOff[],
                                            const PylithInt numS);
 
-            /* Compute tangential directions for 3-D fault.
-             *
-             * @param[in] dim Spatial dimension.
-             * @param[in] refDir1 First choice for reference direction.
-             * @param[in] refDir2 Second choice for reference direction if first fails.
-             * @param[in] normDir Normal direction.
-             * @param[out] tanDir1 First tangential direction.
-             * @param[out] tanDIr2 Second tangential direction.
-             */
-            static void tangential_directions(const PylithInt dim,
-                                              const PylithScalar refDir1[],
-                                              const PylithScalar refDir2[],
-                                              const PylithScalar normDir[],
-                                              PylithScalar tanDir1[],
-                                              PylithScalar tanDir2[]);
-
         }; // _FaultCohesiveKin
     } // fekernels
 } // pylith
@@ -113,63 +99,27 @@ pylith::fekernels::_FaultCohesiveKin::lagrange_sOff(const PylithInt sOff[],
 
 
 // ----------------------------------------------------------------------
-// Compute tangential directions from reference direction (first and second choice) and normal direction in 3-D.
+// f0 function for elasticity equation: f0u = +\lambda (neg side).
 void
-pylith::fekernels::_FaultCohesiveKin::tangential_directions(const PylithInt dim,
-                                                            const PylithScalar refDir1[],
-                                                            const PylithScalar refDir2[],
-                                                            const PylithScalar normDir[],
-                                                            PylithScalar tanDir1[],
-                                                            PylithScalar tanDir2[]) {
-    assert(3 == dim);
-    assert(refDir1);
-    assert(refDir2);
-    assert(normDir);
-    assert(tanDir1);
-    assert(tanDir2);
-
-    const PylithInt _dim = 3;
-    PylithScalar refDir[3] = { refDir1[0], refDir1[1], refDir1[2] };
-    if (fabs(refDir[0]*normDir[0] + refDir[1]*normDir[1] + refDir[2]*normDir[2]) > 0.98) {
-        for (PylithInt i = 0; i < _dim; ++i) {
-            refDir[i] = refDir2[i];
-        } // for
-    } // if
-
-    // refDir x normDir
-    tanDir1[0] = +refDir[1]*normDir[2] - refDir[2]*normDir[1];
-    tanDir1[1] = +refDir[2]*normDir[0] - refDir[0]*normDir[2];
-    tanDir1[2] = +refDir[0]*normDir[1] - refDir[1]*normDir[0];
-
-    // normDir x tanDir1
-    tanDir2[0] = +normDir[1]*tanDir1[2] - normDir[2]*tanDir1[1];
-    tanDir2[1] = +normDir[2]*tanDir1[0] - normDir[0]*tanDir1[2];
-    tanDir2[2] = +normDir[0]*tanDir1[1] - normDir[1]*tanDir1[0];
-} // _tangential_directions
-
-
-// ----------------------------------------------------------------------
-// f0 function for elasticity equation: f0u = -\lambda (pos side), +\lambda (neg side).
-void
-pylith::fekernels::FaultCohesiveKin::f0u(const PylithInt dim,
-                                         const PylithInt numS,
-                                         const PylithInt numA,
-                                         const PylithInt sOff[],
-                                         const PylithInt sOff_x[],
-                                         const PylithScalar s[],
-                                         const PylithScalar s_t[],
-                                         const PylithScalar s_x[],
-                                         const PylithInt aOff[],
-                                         const PylithInt aOff_x[],
-                                         const PylithScalar a[],
-                                         const PylithScalar a_t[],
-                                         const PylithScalar a_x[],
-                                         const PylithReal t,
-                                         const PylithScalar x[],
-                                         const PylithReal n[],
-                                         const PylithInt numConstants,
-                                         const PylithScalar constants[],
-                                         PylithScalar f0[]) {
+pylith::fekernels::FaultCohesiveKin::f0u_neg(const PylithInt dim,
+                                             const PylithInt numS,
+                                             const PylithInt numA,
+                                             const PylithInt sOff[],
+                                             const PylithInt sOff_x[],
+                                             const PylithScalar s[],
+                                             const PylithScalar s_t[],
+                                             const PylithScalar s_x[],
+                                             const PylithInt aOff[],
+                                             const PylithInt aOff_x[],
+                                             const PylithScalar a[],
+                                             const PylithScalar a_t[],
+                                             const PylithScalar a_x[],
+                                             const PylithReal t,
+                                             const PylithScalar x[],
+                                             const PylithReal n[],
+                                             const PylithInt numConstants,
+                                             const PylithScalar constants[],
+                                             PylithScalar f0[]) {
     assert(sOff);
     assert(s);
     assert(f0);
@@ -179,15 +129,54 @@ pylith::fekernels::FaultCohesiveKin::f0u(const PylithInt dim,
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
     const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + spaceDim;
     const PylithInt sOffLagrange = pylith::fekernels::_FaultCohesiveKin::lagrange_sOff(sOff, numS);
     const PylithScalar* lagrange = &s[sOffLagrange];
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
         f0[fOffN+i] += -lagrange[i];
+    } // for
+} // f0u_neg
+
+
+// ----------------------------------------------------------------------
+// f0 function for elasticity equation: f0u = -\lambda (pos side).
+void
+pylith::fekernels::FaultCohesiveKin::f0u_pos(const PylithInt dim,
+                                             const PylithInt numS,
+                                             const PylithInt numA,
+                                             const PylithInt sOff[],
+                                             const PylithInt sOff_x[],
+                                             const PylithScalar s[],
+                                             const PylithScalar s_t[],
+                                             const PylithScalar s_x[],
+                                             const PylithInt aOff[],
+                                             const PylithInt aOff_x[],
+                                             const PylithScalar a[],
+                                             const PylithScalar a_t[],
+                                             const PylithScalar a_x[],
+                                             const PylithReal t,
+                                             const PylithScalar x[],
+                                             const PylithReal n[],
+                                             const PylithInt numConstants,
+                                             const PylithScalar constants[],
+                                             PylithScalar f0[]) {
+    assert(sOff);
+    assert(s);
+    assert(f0);
+
+    assert(numS >= 2);
+
+    const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+
+    const PylithInt fOffP = 0;
+    const PylithInt sOffLagrange = pylith::fekernels::_FaultCohesiveKin::lagrange_sOff(sOff, numS);
+    const PylithScalar* lagrange = &s[sOffLagrange];
+
+    for (PylithInt i = 0; i < spaceDim; ++i) {
+        // f0[fOffN+i] += -lagrange[i];
         f0[fOffP+i] += +lagrange[i];
     } // for
-} // f0u
+} // f0u_pos
 
 
 // ----------------------------------------------------------------------
@@ -249,7 +238,7 @@ pylith::fekernels::FaultCohesiveKin::f0l_u(const PylithInt dim,
         const PylithScalar* refDir1 = &constants[0];
         const PylithScalar* refDir2 = &constants[3];
         PylithScalar tanDir1[3], tanDir2[3];
-        pylith::fekernels::_FaultCohesiveKin::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
+        BoundaryDirections::tangential_directions(tanDir1, tanDir2, refDir1, refDir2, n);
 
         for (PylithInt i = 0; i < _spaceDim; ++i) {
             const PylithScalar slipXYZ = n[i]*slip[0] + tanDir1[i]*slip[1] + tanDir2[i]*slip[2];
@@ -321,7 +310,7 @@ pylith::fekernels::FaultCohesiveKin::f0l_v(const PylithInt dim,
         const PylithScalar* refDir1 = &constants[0];
         const PylithScalar* refDir2 = &constants[3];
         PylithScalar tanDir1[3], tanDir2[3];
-        pylith::fekernels::_FaultCohesiveKin::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
+        BoundaryDirections::tangential_directions(tanDir1, tanDir2, refDir1, refDir2, n);
 
         for (PylithInt i = 0; i < _spaceDim; ++i) {
             const PylithScalar slipRateXYZ = n[i]*slipRate[0] + tanDir1[i]*slipRate[1] + tanDir2[i]*slipRate[2];
@@ -336,13 +325,9 @@ pylith::fekernels::FaultCohesiveKin::f0l_v(const PylithInt dim,
 
 
 // ----------------------------------------------------------------------
-/* Jf0 function for integration of the displacement equation.
- *
- * Solution fields = [disp(dim), ..., lagrange(dim)]
- * Auxiliary fields = None
- */
+// f0 function for slip acceleration constraint equation: f0\lambda = (\dot{v}^+ - \dot{v}^-) - \ddot{d}
 void
-pylith::fekernels::FaultCohesiveKin::Jf0ul(const PylithInt dim,
+pylith::fekernels::FaultCohesiveKin::f0l_a(const PylithInt dim,
                                            const PylithInt numS,
                                            const PylithInt numA,
                                            const PylithInt sOff[],
@@ -356,12 +341,131 @@ pylith::fekernels::FaultCohesiveKin::Jf0ul(const PylithInt dim,
                                            const PylithScalar a_t[],
                                            const PylithScalar a_x[],
                                            const PylithReal t,
-                                           const PylithReal s_tshift,
                                            const PylithScalar x[],
                                            const PylithReal n[],
                                            const PylithInt numConstants,
                                            const PylithScalar constants[],
-                                           PylithScalar Jf0[]) {
+                                           PylithScalar f0[]) {
+    assert(sOff);
+    assert(aOff);
+    assert(s);
+    assert(a);
+    assert(f0);
+
+    assert(numS >= 3);
+    assert(numA >= 1);
+
+    const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+    const PylithInt i_slipAcc = numA-1;
+
+    const PylithScalar* slipAcc = &a[aOff[i_slipAcc]];
+
+    const PylithInt sOffVelN = _FaultCohesiveKin::velocity_sOff(sOff, numS);
+    const PylithInt sOffVelP = sOffVelN+spaceDim;
+    const PylithInt fOffLagrange = 0;
+
+    const PylithScalar* accN = &s_t[sOffVelN];
+    const PylithScalar* accP = &s_t[sOffVelP];
+
+    switch (spaceDim) {
+    case 2: {
+        const PylithInt _spaceDim = 2;
+        const PylithScalar tanDir[2] = {-n[1], n[0] };
+        for (PylithInt i = 0; i < _spaceDim; ++i) {
+            const PylithScalar slipAccXY = n[i]*slipAcc[0] + tanDir[i]*slipAcc[1];
+            f0[fOffLagrange+i] += accP[i] - accN[i] - slipAccXY;
+        } // for
+        break;
+    } // case 2
+    case 3: {
+        const PylithInt _spaceDim = 3;
+        const PylithScalar* refDir1 = &constants[0];
+        const PylithScalar* refDir2 = &constants[3];
+        PylithScalar tanDir1[3], tanDir2[3];
+        BoundaryDirections::tangential_directions(tanDir1, tanDir2, refDir1, refDir2, n);
+
+        for (PylithInt i = 0; i < _spaceDim; ++i) {
+            const PylithScalar slipAccXYZ = n[i]*slipAcc[0] + tanDir1[i]*slipAcc[1] + tanDir2[i]*slipAcc[2];
+            f0[fOffLagrange+i] += accP[i] - accN[i] - slipAccXYZ;
+        } // for
+        break;
+    } // case 3
+    default:
+        assert(0);
+    } // switch
+} // f0l_a
+
+
+// ----------------------------------------------------------------------
+/* Jf0 function for integration of the displacement equation (neg side).
+ *
+ * Solution fields = [disp(dim), ..., lagrange(dim)]
+ * Auxiliary fields = None
+ */
+void
+pylith::fekernels::FaultCohesiveKin::Jf0ul_neg(const PylithInt dim,
+                                               const PylithInt numS,
+                                               const PylithInt numA,
+                                               const PylithInt sOff[],
+                                               const PylithInt sOff_x[],
+                                               const PylithScalar s[],
+                                               const PylithScalar s_t[],
+                                               const PylithScalar s_x[],
+                                               const PylithInt aOff[],
+                                               const PylithInt aOff_x[],
+                                               const PylithScalar a[],
+                                               const PylithScalar a_t[],
+                                               const PylithScalar a_x[],
+                                               const PylithReal t,
+                                               const PylithReal s_tshift,
+                                               const PylithScalar x[],
+                                               const PylithReal n[],
+                                               const PylithInt numConstants,
+                                               const PylithScalar constants[],
+                                               PylithScalar Jf0[]) {
+    assert(numS >= 2);
+    assert(Jf0);
+    assert(sOff);
+    assert(n);
+
+    const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+
+    const PylithInt gOffN = 0;
+    const PylithInt ncols = spaceDim;
+
+    for (PylithInt i = 0; i < spaceDim; ++i) {
+        Jf0[(gOffN+i)*ncols+i] += -1.0;
+    } // for
+} // Jg0ul_neg
+
+
+// ----------------------------------------------------------------------
+/* Jf0 function for integration of the displacement equation (pos side).
+ *
+ * Solution fields = [disp(dim), ..., lagrange(dim)]
+ * Auxiliary fields = None
+ */
+void
+pylith::fekernels::FaultCohesiveKin::Jf0ul_pos(const PylithInt dim,
+                                               const PylithInt numS,
+                                               const PylithInt numA,
+                                               const PylithInt sOff[],
+                                               const PylithInt sOff_x[],
+                                               const PylithScalar s[],
+                                               const PylithScalar s_t[],
+                                               const PylithScalar s_x[],
+                                               const PylithInt aOff[],
+                                               const PylithInt aOff_x[],
+                                               const PylithScalar a[],
+                                               const PylithScalar a_t[],
+                                               const PylithScalar a_x[],
+                                               const PylithReal t,
+                                               const PylithReal s_tshift,
+                                               const PylithScalar x[],
+                                               const PylithReal n[],
+                                               const PylithInt numConstants,
+                                               const PylithScalar constants[],
+                                               PylithScalar Jf0[]) {
     assert(numS >= 2);
     assert(Jf0);
     assert(sOff);
@@ -374,10 +478,9 @@ pylith::fekernels::FaultCohesiveKin::Jf0ul(const PylithInt dim,
     const PylithInt ncols = spaceDim;
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        Jf0[(gOffN+i)*ncols+i] += -1.0;
         Jf0[(gOffP+i)*ncols+i] += +1.0;
     } // for
-} // Jg0ul
+} // Jg0ul_pos
 
 
 // ----------------------------------------------------------------------

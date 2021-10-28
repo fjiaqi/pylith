@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2015 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ======================================================================
 //
@@ -331,11 +331,11 @@ pylith::problems::Problem::initialize(void) {
     assert(_solution);
 
     // Initialize solution field.
-    PetscErrorCode err = DMSetFromOptions(_solution->dmMesh());PYLITH_CHECK_ERROR(err);
+    PetscErrorCode err = DMSetFromOptions(_solution->getDM());PYLITH_CHECK_ERROR(err);
     _setupSolution();
 
-    const pylith::topology::Mesh& mesh = _solution->mesh();
-    pylith::topology::CoordsVisitor::optimizeClosure(mesh.dmMesh());
+    const pylith::topology::Mesh& mesh = _solution->getMesh();
+    pylith::topology::CoordsVisitor::optimizeClosure(mesh.getDM());
 
     // Initialize integrators.
     _createIntegrators();
@@ -388,7 +388,7 @@ pylith::problems::Problem::_checkMaterialIds(void) const {
         materialIds[count++] = _interfaces[i]->getInterfaceId();
     } // for
 
-    pylith::topology::MeshOps::checkMaterialIds(_solution->mesh(), materialIds);
+    pylith::topology::MeshOps::checkMaterialIds(_solution->getMesh(), materialIds);
 
     PYLITH_METHOD_END;
 } // _checkMaterialIds
@@ -448,38 +448,34 @@ pylith::problems::Problem::_createConstraints(void) {
     const size_t numInterfaces = _interfaces.size();
     const size_t numBC = _bc.size();
 
-    const size_t maxSize = numMaterials + numInterfaces + numBC;
-    _constraints.resize(maxSize);
-    size_t count = 0;
+    _constraints.resize(0); // insure we start with an empty array.
+
 
     for (size_t i = 0; i < numMaterials; ++i) {
         assert(_materials[i]);
-        pylith::feassemble::Constraint* constraint = _materials[i]->createConstraint(*_solution);
-        assert(count < maxSize);
-        if (constraint) { _constraints[count++] = constraint;}
+        std::vector<pylith::feassemble::Constraint*> constraints = _materials[i]->createConstraints(*_solution);
+        _constraints.insert(_constraints.end(), constraints.begin(), constraints.end());
+
     } // for
 
     for (size_t i = 0; i < numInterfaces; ++i) {
         assert(_interfaces[i]);
-        pylith::feassemble::Constraint* constraint = _interfaces[i]->createConstraint(*_solution);
-        assert(count < maxSize);
-        if (constraint) { _constraints[count++] = constraint;}
+        std::vector<pylith::feassemble::Constraint*> constraints = _interfaces[i]->createConstraints(*_solution);
+        _constraints.insert(_constraints.end(), constraints.begin(), constraints.end());
+
     } // for
 
     for (size_t i = 0; i < numBC; ++i) {
         assert(_bc[i]);
-        pylith::feassemble::Constraint* constraint = _bc[i]->createConstraint(*_solution);
-        assert(count < maxSize);
-        if (constraint) { _constraints[count++] = constraint;}
-    } // for
+        std::vector<pylith::feassemble::Constraint*> constraints = _bc[i]->createConstraints(*_solution);
+        _constraints.insert(_constraints.end(), constraints.begin(), constraints.end());
 
-    _constraints.resize(count);
+    } // for
 
     PYLITH_METHOD_END;
 } // _createConstraints
 
 
-#include <iostream>
 // ---------------------------------------------------------------------------------------------------------------------
 // Setup solution subfields and discretization.
 void
@@ -488,75 +484,31 @@ pylith::problems::Problem::_setupSolution(void) {
     PYLITH_COMPONENT_DEBUG("Problem::_setupSolution()");
 
     assert(_solution);
-
     _solution->subfieldsSetup();
-    if (_solution->hasSubfield("lagrange_multiplier_fault")) {
-        _setupLagrangeMultiplier();
-    } // if
-
     _solution->createDiscretization();
 
-    if (_solution->hasSubfield("lagrange_multiplier_fault")) {
-        // Mark lagrange_multiplier_fault field for implicit solve.
-        PetscErrorCode err = 0;
-        PetscDS prob = NULL;
-        PetscInt cStart = 0, cEnd = 0;
-        PetscDM dmSoln = _solution->dmMesh();assert(dmSoln);
-        err = DMPlexGetHeightStratum(dmSoln, 0, &cStart, &cEnd);PYLITH_CHECK_ERROR(err);
-        PetscInt cell = cStart;
-        for (; cell < cEnd; ++cell) {
-            if (pylith::topology::MeshOps::isCohesiveCell(dmSoln, cell)) { break; }
-        } // for
-        err = DMGetCellDS(dmSoln, cell, &prob);PYLITH_CHECK_ERROR(err);
-        assert(prob);
-
-        const pylith::topology::Field::SubfieldInfo& lagrangeMultiplierInfo = _solution->subfieldInfo("lagrange_multiplier_fault");
-        err = PetscDSSetImplicit(prob, lagrangeMultiplierInfo.index, PETSC_TRUE);PYLITH_CHECK_ERROR(err);
-    } // if
+    // Mark fault fields as implicit.
+    const pylith::string_vector& subfieldNames = _solution->getSubfieldNames();
+    for (size_t i = 0; i < subfieldNames.size(); ++i) {
+        const pylith::topology::Field::SubfieldInfo& subfieldInfo = _solution->getSubfieldInfo(subfieldNames[i].c_str());
+        if (subfieldInfo.fe.isFaultOnly) {
+            PetscErrorCode err;
+            PetscDS ds = NULL;
+            PetscInt cStart = 0, cEnd = 0;
+            PetscDM dmSoln = _solution->getDM();assert(dmSoln);
+            err = DMPlexGetHeightStratum(dmSoln, 0, &cStart, &cEnd);PYLITH_CHECK_ERROR(err);
+            PetscInt cell = cStart;
+            for (; cell < cEnd; ++cell) {
+                if (pylith::topology::MeshOps::isCohesiveCell(dmSoln, cell)) { break; }
+            } // for
+            err = DMGetCellDS(dmSoln, cell, &ds);PYLITH_CHECK_ERROR(err);
+            assert(ds);
+            err = PetscDSSetImplicit(ds, subfieldInfo.index, PETSC_TRUE);PYLITH_CHECK_ERROR(err);
+        } // if
+    } // for
 
     PYLITH_METHOD_END;
 } // _setupSolution
-
-
-// ---------------------------------------------------------------------------------------------------------------------
-// Setup field so Lagrange multiplier subfield is limited to degrees of freedom associated with the cohesive cells.
-void
-pylith::problems::Problem::_setupLagrangeMultiplier(void) {
-    PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("Problem::_setupLagrangeMultiplier()");
-
-    assert(_solution->hasSubfield("lagrange_multiplier_fault"));
-
-    PetscDMLabel cohesiveLabel = NULL;
-    PylithInt dim = 0;
-    PylithInt pStart = 0;
-    PylithInt pEnd = 0;
-    PylithInt pMax = 0;
-    PetscErrorCode err;
-
-    PetscDM dmSoln = _solution->dmMesh();assert(dmSoln);
-    err = DMGetDimension(dmSoln, &dim);PYLITH_CHECK_ERROR(err);
-    err = DMCreateLabel(dmSoln, "cohesive interface");PYLITH_CHECK_ERROR(err);
-    err = DMGetLabel(dmSoln, "cohesive interface", &cohesiveLabel);PYLITH_CHECK_ERROR(err);
-    for (PylithInt iDim = 0; iDim <= dim; ++iDim) {
-        err = DMPlexGetHeightStratum(dmSoln, iDim, &pStart, &pEnd);PYLITH_CHECK_ERROR(err);
-        err = DMPlexGetSimplexOrBoxCells(dmSoln, iDim, NULL, &pMax);PYLITH_CHECK_ERROR(err);
-        for (PylithInt p = pMax; p < pEnd; ++p) {
-            err = DMLabelSetValue(cohesiveLabel, p, 1);PYLITH_CHECK_ERROR(err);
-        } // for
-    } // for
-
-    // Reset discretization (FE), now using label.
-    const pylith::topology::Field::SubfieldInfo& lagrangeMultiplierInfo = _solution->subfieldInfo("lagrange_multiplier_fault");
-    PetscFE fe = NULL;
-    err = DMGetField(dmSoln, lagrangeMultiplierInfo.index, NULL, (PetscObject*)&fe);PYLITH_CHECK_ERROR(err);assert(fe);
-    err = PetscObjectReference((PetscObject)fe);PYLITH_CHECK_ERROR(err);
-    err = DMSetField(dmSoln, lagrangeMultiplierInfo.index, cohesiveLabel, (PetscObject)fe);PYLITH_CHECK_ERROR(err);
-
-    err = PetscFEDestroy(&fe);PYLITH_CHECK_ERROR(err);
-
-    PYLITH_METHOD_END;
-} // _setupLagrangeMultiplier
 
 
 // End of file

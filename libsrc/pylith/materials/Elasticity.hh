@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2015 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ----------------------------------------------------------------------
 //
@@ -125,29 +125,21 @@ protected:
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    /** Set kernels for RHS residual.
+    /** Set kernels for residual.
      *
      * @param[out] integrator Integrator for material.
      * @param[in] solution Solution field.
      */
-    void _setKernelsRHSResidual(pylith::feassemble::IntegratorDomain* integrator,
-                                const pylith::topology::Field& solution) const;
+    void _setKernelsResidual(pylith::feassemble::IntegratorDomain* integrator,
+                             const pylith::topology::Field& solution) const;
 
-    /** Set kernels for LHS residual.
+    /** Set kernels for Jacobian.
      *
      * @param[out] integrator Integrator for material.
      * @param[in] solution Solution field.
      */
-    void _setKernelsLHSResidual(pylith::feassemble::IntegratorDomain* integrator,
-                                const pylith::topology::Field& solution) const;
-
-    /** Set kernels for LHS Jacobian.
-     *
-     * @param[out] integrator Integrator for material.
-     * @param[in] solution Solution field.
-     */
-    void _setKernelsLHSJacobian(pylith::feassemble::IntegratorDomain* integrator,
-                                const pylith::topology::Field& solution) const;
+    void _setKernelsJacobian(pylith::feassemble::IntegratorDomain* integrator,
+                             const pylith::topology::Field& solution) const;
 
     /** Set kernels for computing updated state variables in auxiliary field.
      *
@@ -168,7 +160,6 @@ private:
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    bool _useInertia; ///< Flag to include inertial term.
     bool _useBodyForce; ///< Flag to include body force term.
     pylith::materials::RheologyElasticity* _rheology; ///< Bulk rheology for elasticity.
     pylith::materials::DerivedFactoryElasticity* _derivedFactory; ///< Factory for creating derived fields.

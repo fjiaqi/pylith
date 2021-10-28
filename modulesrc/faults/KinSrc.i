@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2017 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ----------------------------------------------------------------------
 //
@@ -86,6 +86,32 @@ namespace pylith {
 			      const PylithScalar t,
 			      const PylithScalar timeScale);
 	    
+	  /** Set slip rate values at time t.
+	   *
+	   * @param[inout] slipRateLocalVec Local PETSc vector for slip values.
+	   * @param[in] faultAuxiliaryField Auxiliary field for fault.
+	   * @param[in] t Time t.
+	   * @param[in] timeScale Time scale for nondimensionalization.
+	   */
+	  virtual
+	  void updateSlipRate(PetscVec slipRateLocalVec,
+			      pylith::topology::Field* faultAuxiliaryField,
+			      const PylithScalar t,
+			      const PylithScalar timeScale);
+
+	  /** Set slip acceleration values at time t.
+	   *
+	   * @param[inout] slipAccLocalVec Local PETSc vector for slip values.
+	   * @param[in] faultAuxiliaryField Auxiliary field for fault.
+	   * @param[in] t Time t.
+	   * @param[in] timeScale Time scale for nondimensionalization.
+	   */
+	  virtual
+	  void updateSlipAcc(PetscVec slipAccLocalVec,
+			     pylith::topology::Field* faultAuxiliaryField,
+			     const PylithScalar t,
+			     const PylithScalar timeScale);
+
 	    // PROTECTED METHODS //////////////////////////////////////////////////
 	protected:
 	    

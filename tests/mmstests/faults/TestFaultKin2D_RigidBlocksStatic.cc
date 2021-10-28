@@ -4,14 +4,14 @@
 //
 // Brad T. Aagaard, U.S. Geological Survey
 // Charles A. Williams, GNS Science
-// Matthew G. Knepley, University of Chicago
+// Matthew G. Knepley, University at Buffalo
 //
 // This code was developed as part of the Computational Infrastructure
 // for Geodynamics (http://geodynamics.org).
 //
-// Copyright (c) 2010-2015 University of California, Davis
+// Copyright (c) 2010-2021 University of California, Davis
 //
-// See COPYING for license information.
+// See LICENSE.md for license information.
 //
 // ----------------------------------------------------------------------
 //
@@ -215,7 +215,6 @@ protected:
 
         _data->spaceDim = 2;
         _data->meshFilename = ":UNKNOWN:"; // Set in child class.
-        _data->boundaryLabel = "boundary";
 
         CPPUNIT_ASSERT(!_data->cs);
         _data->cs = new spatialdata::geocoords::CSCart;CPPUNIT_ASSERT(_data->cs);
@@ -268,19 +267,46 @@ protected:
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
-        CPPUNIT_ASSERT(_material);
-        _material->setFormulation(pylith::problems::Physics::QUASISTATIC);
-        _material->useBodyForce(false);
-        _material->setDescriptiveLabel("Isotropic Linear Elascitity Plane Strain");
-        _material->setMaterialId(24);
-        _material->setBulkRheology(_data->rheology);
+        // Materials
+        _materials.resize(2);
+        { // xneg
+            pylith::materials::Elasticity* material = new pylith::materials::Elasticity();assert(material);
+            material->setFormulation(pylith::problems::Physics::QUASISTATIC);
+            material->useBodyForce(false);
+            material->setDescriptiveLabel("Isotropic Linear Elascitity Plane Strain");
+            material->setMaterialId(10);
+            material->setBulkRheology(_data->rheology);
+            _materials[0] = material;
+        } // xneg
+        { // xpos
+            pylith::materials::Elasticity* material = new pylith::materials::Elasticity();assert(material);
+            material->setFormulation(pylith::problems::Physics::QUASISTATIC);
+            material->useBodyForce(false);
+            material->setDescriptiveLabel("Isotropic Linear Elascitity Plane Strain");
+            material->setMaterialId(20);
+            material->setBulkRheology(_data->rheology);
+            _materials[1] = material;
+        } // xpos
 
         static const PylithInt constrainedDOF[2] = {0, 1};
         static const PylithInt numConstrained = 2;
-        _bc->setConstrainedDOF(constrainedDOF, numConstrained);
-        _bc->setMarkerLabel("boundary");
-        _bc->setSubfieldName("displacement");
-        _bc->setUserFn(solnkernel_disp);
+        _bcs.resize(2);
+        { // boundary_xpos
+            pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
+            bc->setConstrainedDOF(constrainedDOF, numConstrained);
+            bc->setMarkerLabel("boundary_xpos");
+            bc->setSubfieldName("displacement");
+            bc->setUserFn(solnkernel_disp);
+            _bcs[0] = bc;
+        } // boundary_xpos
+        { // boundary_xneg
+            pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
+            bc->setConstrainedDOF(constrainedDOF, numConstrained);
+            bc->setMarkerLabel("boundary_xneg");
+            bc->setSubfieldName("displacement");
+            bc->setUserFn(solnkernel_disp);
+            _bcs[1] = bc;
+        } // boundary_zneg
 
         _fault->setInterfaceId(100);
         _fault->setSurfaceMarkerLabel("fault");
@@ -291,7 +317,7 @@ protected:
     void _setExactSolution(void) {
         CPPUNIT_ASSERT(_solution);
 
-        PetscDM dm = _solution->dmMesh();
+        PetscDM dm = _solution->getDM();
         PetscDMLabel label;
         PetscIS is;
         PetscInt cohesiveCell;
@@ -327,7 +353,7 @@ class pylith::mmstests::TestFaultKin2D_RigidBlocksStatic_TriP1 :
         _data->numSolnSubfields = 2;
         static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
             pylith::topology::Field::Discretization(1, 1), // disp
-            pylith::topology::Field::Discretization(1, 1, 1), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(1, 1, 1, -1, true), // lagrange_multiplier_fault
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -364,7 +390,7 @@ class pylith::mmstests::TestFaultKin2D_RigidBlocksStatic_TriP2 :
         _data->numSolnSubfields = 2;
         static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
             pylith::topology::Field::Discretization(2, 2), // disp
-            pylith::topology::Field::Discretization(2, 2, 1), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // lagrange_multiplier_fault
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -401,7 +427,7 @@ class pylith::mmstests::TestFaultKin2D_RigidBlocksStatic_TriP3 :
         _data->numSolnSubfields = 2;
         static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
             pylith::topology::Field::Discretization(3, 3), // disp
-            pylith::topology::Field::Discretization(3, 3, 1), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(3, 3, 1, -1, true), // lagrange_multiplier_fault
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -438,7 +464,7 @@ class pylith::mmstests::TestFaultKin2D_RigidBlocksStatic_TriP4 :
         _data->numSolnSubfields = 2;
         static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
             pylith::topology::Field::Discretization(4, 4), // disp
-            pylith::topology::Field::Discretization(4, 4, 1), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(4, 4, 1, -1, true), // lagrange_multiplier_fault
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -463,7 +489,7 @@ class pylith::mmstests::TestFaultKin2D_RigidBlocksStatic_QuadQ1 :
         _data->numSolnSubfields = 2;
         static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
             pylith::topology::Field::Discretization(1, 1), // disp
-            pylith::topology::Field::Discretization(1, 1, 1), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(1, 1, 1, -1, true), // lagrange_multiplier_fault
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -500,7 +526,7 @@ class pylith::mmstests::TestFaultKin2D_RigidBlocksStatic_QuadQ2 :
         _data->numSolnSubfields = 2;
         static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
             pylith::topology::Field::Discretization(2, 2), // disp
-            pylith::topology::Field::Discretization(2, 2, 1), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // lagrange_multiplier_fault
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -537,7 +563,7 @@ class pylith::mmstests::TestFaultKin2D_RigidBlocksStatic_QuadQ3 :
         _data->numSolnSubfields = 2;
         static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
             pylith::topology::Field::Discretization(3, 3), // disp
-            pylith::topology::Field::Discretization(3, 3, 1), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(3, 3, 1, -1, true), // lagrange_multiplier_fault
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -574,7 +600,7 @@ class pylith::mmstests::TestFaultKin2D_RigidBlocksStatic_QuadQ4 :
         _data->numSolnSubfields = 2;
         static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
             pylith::topology::Field::Discretization(4, 4), // disp
-            pylith::topology::Field::Discretization(4, 4, 1), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(4, 4, 1, -1, true), // lagrange_multiplier_fault
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
