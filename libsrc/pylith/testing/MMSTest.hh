@@ -99,6 +99,7 @@ protected:
     bool _isJacobianLinear; ///< Jacobian is should be linear.
     bool _disableFiniteDifferenceCheck; ///< Flag to indicate not to perform finite-difference check of Jacobian.
     bool _allowZeroResidual; ///< Allow residual to be exactly zero.
+    PylithReal _residualTolerance; ///< Tolerance for residual of projected exact solution
 
 }; // MMSTest
 

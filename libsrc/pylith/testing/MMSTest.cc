@@ -49,6 +49,7 @@ pylith::testing::MMSTest::setUp(void) {
     _isJacobianLinear = false;
     _disableFiniteDifferenceCheck = false;
     _allowZeroResidual = false;
+    _residualTolerance = 1.e-10;
 } // setUp
 
 

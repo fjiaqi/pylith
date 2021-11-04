@@ -148,6 +148,7 @@ protected:
 
     void setUp(void) {
         TestIsotropicLinearElasticity::setUp();
+        this->_residualTolerance = 5.e-7;
 
         // Overwrite component names for control of journals at test level.
         GenericComponent::setName("TestIsotropicLinearElasticity2D_SmallStrainBodyForce");
